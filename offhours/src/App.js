@@ -9,6 +9,7 @@ import { NavigationBar } from './components/Navbar'
 
 class App extends Component {
   render() {
+    
     return (
       <React.Fragment>
 

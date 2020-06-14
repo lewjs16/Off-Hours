@@ -22,7 +22,7 @@ export const NavigationBar = () => (
             <Navbar.Brand href="/">Offhours</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav"/>
             <Navbar.Collapse id="basic-nav">
-                <Nav className="ml-auto" style={{margin-left: 'auto', margin-right: 'auto'}}>
+                <Nav className="ml-auto" style={{margin: 'auto'}}>
                     <Nav.Item><Nav.Link href="/Watch">Watch</Nav.Link></Nav.Item>
                     <Nav.Item><Nav.Link href="/Stream">Stream</Nav.Link></Nav.Item>
                 </Nav>

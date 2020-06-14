@@ -1,7 +1,10 @@
 import React from 'react'
 
-export const Watch = () => (
+
+
+export const Watch = ( 
+) => (
     <div>
-        <p>watch</p>
+        hi
     </div>
 )
