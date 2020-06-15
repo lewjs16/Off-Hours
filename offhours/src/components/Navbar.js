@@ -19,7 +19,7 @@ const Styles = styled.div`
 export const NavigationBar = () => (
     <Styles>
         <Navbar>
-            <Navbar.Brand href="/">Offhours</Navbar.Brand>
+            <Navbar.Brand href="/"><img src={require("../img/assets/logo1.png")}></img>Offhours</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav"/>
             <Navbar.Collapse id="basic-nav">
                 <Nav className="ml-auto" style={{margin: 'auto'}}>
