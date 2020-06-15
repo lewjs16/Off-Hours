@@ -1,10 +1,11 @@
 import React from 'react'
 
+const Watch = () => {    
 
+    return(
+        <div>
+        </div>
+    )
+}
 
-export const Watch = ( 
-) => (
-    <div>
-        hi
-    </div>
-)
+export default Watch;
