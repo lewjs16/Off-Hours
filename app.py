@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
+from datetime import datetime
 
 # initializes app
 app = Flask(__name__)
@@ -37,7 +38,7 @@ class Questions(db.Model):
     image = db.Column(db.String(80),nullable=True)
     accepted = db.Column(db.Boolean,default=False,nullable=False)
     completed = db.Column(db.Boolean,default=False,nullable=False)
-
+    time = db.Column(db.DateTime, nullable=False,default=datetime.utcnow)
 
 
 @app.route('/',methods=['GET'])
