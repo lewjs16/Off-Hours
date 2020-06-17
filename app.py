@@ -23,23 +23,41 @@ class Streams(db.Model):
     title = db.Column(db.String(80),nullable=False)
     subject = db.Column(db.String(80),nullable=False)
     ownerid = db.Column(db.Integer,nullable=False)
-    streamimg = db.Column(db.String(80),nullable=False)
-    vidnum = db.Column(db.Integer,nullable=False)
+    streamimg = db.Column(db.String(80),default=True)
+    vidnum = db.Column(db.Integer,nullable=True)
+
+    def __init__(self,title,subject,ownerid):
+        self.title=title
+        self.subject=subject
+        self.ownerid=ownerid
 
 class Users(db.Model):
     id = db.Column(db.Integer,db.ForeignKey('streams.ownerid'),primary_key=True)
     username = db.Column(db.String(80),nullable=False)
     userimg = db.Column(db.String(80),nullable=False)
 
+    def __init__(self,username,userimg):
+        self.username = username
+        self.userimg = userimg
+
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     streamid = db.Column(db.Integer,db.ForeignKey('streams.id'),nullable=False)
     userid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
+    offervalue = db.Column(db.Integer,nullable=False)
     message = db.Column(db.Text,nullable=True)
     image = db.Column(db.String(80),nullable=True)
     accepted = db.Column(db.Boolean,default=False,nullable=False)
     completed = db.Column(db.Boolean,default=False,nullable=False)
     time = db.Column(db.DateTime, nullable=False,default=datetime.utcnow)
+
+    def __init__(self,streamid,userid,message,image):
+        self.streamid = streamid
+        self.userid = userid
+        if (message):
+            self.message = message
+        if (image):
+            self.image = image
 
 
 @app.route('/',methods=['GET'])
