@@ -34,6 +34,7 @@ class Users(db.Model):
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     streamid = db.Column(db.Integer,db.ForeignKey('streams.id'),nullable=False)
+    userid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
     message = db.Column(db.Text,nullable=True)
     image = db.Column(db.String(80),nullable=True)
     accepted = db.Column(db.Boolean,default=False,nullable=False)
