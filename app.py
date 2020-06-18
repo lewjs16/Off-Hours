@@ -74,10 +74,19 @@ class Questions_Schema(ma.Schema):
 
 
 #Init Schema
-streams_schema = Streams_Schema()
-user_schema = User_Schema()
-questions_schema = Questions_Schema()
+streams_schema_reg = Streams_Schema()
+user_schema_reg = User_Schema()
+questions_schema_reg = Questions_Schema()
 
+streams_schema_multi = Streams_Schema(many=True)
+user_schema_multi = User_Schema(many=True)
+questions_schema_multi = Questions_Schema(many=True)
+
+streams_schema_single = Streams_Schema(many = False)
+user_schema_single = User_Schema(many=False)
+questions_schema_single = Questions_Schema(many=False)
+
+#Adding a stream
 @app.route('/addStream', methods = ['POST'])
 def add_stream():
     title = request.json['title']
@@ -89,8 +98,43 @@ def add_stream():
     db.session.add(new_stream)
     db.session.commit()
 
-    return streams_schema.jsonify(new_stream)
+    return streams_schema_reg.jsonify(new_stream)
 
+# Getting all streams
+@app.route('/Streams', methods = ['GET'])
+def get_streams():
+    all_streams = Streams.query.all()
+    #serialize the queryset
+    result = streams_schema_multi.dump(all_streams)
+    return jsonify(result)
+
+# Gettings a single stream
+@app.route('/Stream/<id>', methods = ['GET'])
+def get_stream(id):
+     try:
+        stream = Streams.query.get(id)
+     except IntegrityError:
+        return jsonify({"message": "Stream could not be found."}), 400
+
+     result = streams_schema_single.dump(stream)
+     return jsonify(result)
+
+# Update single stream
+@app.route('/StreamUpdate/<id>', methods = ['PUT'])
+def update_stream(id):
+    title = request.json['title']
+    subject = request.json['subject']
+    ownerid = request.json['ownerid']
+
+    update_stream = Streams.query.get(id)
+
+    update_stream.title = title
+    update_stream.subject = subject
+    update_stream.ownerid = ownerid
+
+    db.session.commit()
+
+    return streams_schema_single.jsonify(update_stream)
 
 if __name__ == '__main__':
     app.run(debug=True)
