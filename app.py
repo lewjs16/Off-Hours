@@ -59,10 +59,38 @@ class Questions(db.Model):
         if (image):
             self.image = image
 
+#Schema 
+class Streams_Schema(ma.Schema):
+    class Meta:
+        fields = ('id','title', 'subject', 'ownerid')
 
-@app.route('/',methods=['GET'])
-def get():
-    return jsonify({'msg':'Hellow World'})
+class User_Schema(ma.Schema):
+    class Meta: 
+        fields = ('id','username', 'userimg')
+
+class Questions_Schema(ma.Schema):
+    class Meta: 
+        fields = ('id','streamid','userid', 'message', 'image')
+
+
+#Init Schema
+streams_schema = Streams_Schema()
+user_schema = User_Schema()
+questions_schema = Questions_Schema()
+
+@app.route('/addStream', methods = ['POST'])
+def add_stream():
+    title = request.json['title']
+    subject = request.json['subject']
+    ownerid = request.json['ownerid']
+
+    new_stream = Streams(title, subject, ownerid)
+
+    db.session.add(new_stream)
+    db.session.commit()
+
+    return streams_schema.jsonify(new_stream)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
