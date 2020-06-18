@@ -204,6 +204,27 @@ def login():
 
     return user_schema_single.jsonify(new_user)
 
+# Get new token for user 
+@app.route('/token/<id>', methods = ['POST'])
+def renew_token(id):
+    try:
+        user = Users.query.get(id)
+        if user is None:
+            return ({"token": "Not Available"})
+        else:
+            clientID = "glsmk1f8nj211k9v1r916xbsgqnuq4"
+            secret = "fzisu9q67fhgx6wpg1yqd9fia52502"
+            r_token = requests.post("https://id.twitch.tv/oauth2/token",
+            {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
+            user.token = json.loads(r_token.text)['access_token']
+            user.time = json.loads(r_token.text)['expires_in']
+
+            db.session.commit()
+
+            return ({"token": user.token})
+    except IntegrityError:
+        return jsonify({"token": "Not Available"}), 400
+
 @app.route('/login_check/<id>', methods = ['POST'])
 def login_check(id):
     try:
@@ -219,8 +240,6 @@ def login_check(id):
     except IntegrityError:
         return jsonify({"username": "Not Available", "logid": False}), 400
     
-
-        
 
 #END USER FUNCTIONS---------------------------------------------------------------------
 
