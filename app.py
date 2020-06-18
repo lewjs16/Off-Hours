@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from django.db import IntegrityError
 import os
 import json
 import requests
@@ -99,14 +100,17 @@ class Questions_Schema(ma.Schema):
 streams_schema_reg = Streams_Schema()
 user_schema_reg = User_Schema()
 questions_schema_reg = Questions_Schema()
+subjects_schema_reg = Subjects_Schema()
 
 streams_schema_multi = Streams_Schema(many=True)
 user_schema_multi = User_Schema(many=True)
 questions_schema_multi = Questions_Schema(many=True)
+subjects_schema_multi = Subjects_Schema(many = True)
 
 streams_schema_single = Streams_Schema(many = False)
 user_schema_single = User_Schema(many=False)
 questions_schema_single = Questions_Schema(many=False)
+subjects_schema_single = Subjects_Schema(many = False)
 
 #START STREAM FUNCTIONS---------------------------------------------------------------------
 
@@ -179,7 +183,7 @@ def delete_stream(id):
 
 #START USER FUNCTIONS---------------------------------------------------------------------
 
-# log in user
+# login/add user to database
 @app.route('/login', methods = ['GET'])
 def login():
     username = request.json['username']
@@ -199,8 +203,6 @@ def login():
     db.session.commit()
 
     return user_schema_single.jsonify(new_user)
-
-    
 
 @app.route('/login_check', methods = ['POST'])
 def login_check():
