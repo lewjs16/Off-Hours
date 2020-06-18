@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
+import json
+import requests
 from datetime import datetime
 
 # initializes app
@@ -33,7 +35,7 @@ class Subjects(db.Model):
 class Streams(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     title = db.Column(db.String(80),nullable=False)
-    subject = db.Column(db.String(80),ForeignKey('subject.subject'),nullable=False)
+    subject = db.Column(db.String(80),db.ForeignKey('subjects.id'),nullable=False)
     ownerid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
     streamimg = db.Column(db.String(80),default=True)
     vidnum = db.Column(db.Integer,nullable=True)
@@ -46,11 +48,15 @@ class Streams(db.Model):
 class Users(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(80),nullable=False)
+    password = db.Column(db.String(80),nullable=False)
+    token = db.Column(db.Integer,nullable=True)
+    time = db.Column(db.Integer,nullable=True)
     userimg = db.Column(db.String(80),nullable=False)
 
-    def __init__(self,username,userimg):
+    def __init__(self,username,password, userimg):
         self.username = username
         self.userimg = userimg
+        self.password = password
 
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -82,7 +88,7 @@ class Streams_Schema(ma.Schema):
 
 class User_Schema(ma.Schema):
     class Meta: 
-        fields = ('id','username', 'userimg')
+        fields = ('id','username','password', 'userimg')
 
 class Questions_Schema(ma.Schema):
     class Meta: 
@@ -146,7 +152,7 @@ def update_stream(id):
 
     try:
         update_stream = Streams.query.get(id)
-     except IntegrityError:
+    except IntegrityError:
         return jsonify({"message": "Stream could not be found."}), 400
 
     update_stream.title = title
@@ -162,7 +168,7 @@ def update_stream(id):
 def delete_stream(id):
     try:
         stream = Streams.query.get(id)
-     except IntegrityError:
+    except IntegrityError:
         return jsonify({"message": "Stream could not be found."}), 400
     db.session.delete(stream)
     db.session.commit()
@@ -173,18 +179,40 @@ def delete_stream(id):
 
 #START USER FUNCTIONS---------------------------------------------------------------------
 
-#check if user is logged in 
-@app.route('/login_check', methods = ['GET', 'POST'])
-def login_check():
-    error = None
+# log in user
+@app.route('/login', methods = ['GET'])
+def login():
+    username = request.json['username']
+    password = request.json['password']
+    userimg = request.json['userimg']
+
+    clientID = "glsmk1f8nj211k9v1r916xbsgqnuq4"
+    secret = "fzisu9q67fhgx6wpg1yqd9fia52502"
+    r_token = requests.post("https://id.twitch.tv/oauth2/token",
+    {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
+
+    new_user = Users(username, password, userimg)
+    new_user.token = json.loads(r_token.text)['access_token']
+    new_user.time = json.loads(r_token.text)['expires_in']
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return user_schema_single.jsonify(new_user)
+
     
-    if LOGIN.request.method == "POST":
-        username = LOGIN.request.form['username']
-        password = LOGIN.request.form['password']
-        clientID = "glsmk1f8nj211k9v1r916xbsgqnuq4"
-        secret = "fzisu9q67fhgx6wpg1yqd9fia52502"
-        r_token = requests.post("https://id.twitch.tv/oauth2/token",
-        {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
+
+@app.route('/login_check', methods = ['POST'])
+def login_check():
+    if LOGIN.session.get('username') is None:
+        return ({"username": 'unidentified', "logid":False})
+
+    if LOGIN.session.get('expires_in') is 0:
+        return ({"username": LOGIN.session.get('username'), "logid": False})
+    else:
+        return ({"username": LOGIN.session.get('username'), "logid": True})
+
+
         
 
 #END USER FUNCTIONS---------------------------------------------------------------------
