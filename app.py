@@ -136,6 +136,15 @@ def update_stream(id):
 
     return streams_schema_single.jsonify(update_stream)
 
+# Delete stream
+@app.route('/StreamDelete/<id>', methods = ['DELETE'])
+def delete_stream(id):
+    stream = Streams.query.get(id)
+    db.session.delete(stream)
+    db.session.commit()
+
+    return streams_schema_reg.jsonify(stream)
+
 if __name__ == '__main__':
     app.run(debug=True)
 
