@@ -22,11 +22,19 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 #Classes 
+class Subjects(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    name = db.Column(db.String(80),nullable=False)
+
+    def __init__(self,id,name):
+        self.id = id
+        self.name = name
+
 class Streams(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     title = db.Column(db.String(80),nullable=False)
-    subject = db.Column(db.String(80),nullable=False)
-    ownerid = db.Column(db.Integer,nullable=False)
+    subject = db.Column(db.String(80),ForeignKey('subject.name'),nullable=False)
+    ownerid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
     streamimg = db.Column(db.String(80),default=True)
     vidnum = db.Column(db.Integer,nullable=True)
 
@@ -36,7 +44,7 @@ class Streams(db.Model):
         self.ownerid=ownerid
 
 class Users(db.Model):
-    id = db.Column(db.Integer,db.ForeignKey('streams.ownerid'),primary_key=True)
+    id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(80),nullable=False)
     userimg = db.Column(db.String(80),nullable=False)
 
@@ -64,6 +72,10 @@ class Questions(db.Model):
             self.image = image
 
 #Schema 
+class Subjects_Schema(ma.Schema):
+    class Meta:
+        fields = ('id','name')
+
 class Streams_Schema(ma.Schema):
     class Meta:
         fields = ('id','title', 'subject', 'ownerid')
