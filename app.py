@@ -204,15 +204,21 @@ def login():
 
     return user_schema_single.jsonify(new_user)
 
-@app.route('/login_check', methods = ['POST'])
-def login_check():
-    if LOGIN.session.get('username') is None:
-        return ({"username": 'unidentified', "logid":False})
+@app.route('/login_check/<id>', methods = ['POST'])
+def login_check(id):
+    try:
+        user = Users.query.get(id)
+        if user is None:
+            return ({"usernamae": "Not Available", "logid": False})
 
-    if LOGIN.session.get('expires_in') is 0:
-        return ({"username": LOGIN.session.get('username'), "logid": False})
-    else:
-        return ({"username": LOGIN.session.get('username'), "logid": True})
+        if user.time is 0:
+            return ({"usernamae": user.username, "logid": False})
+        else:
+            return ({"usernamae": user.username, "logid": True})
+            
+    except IntegrityError:
+        return jsonify({"usernamae": "Not Available", "logid": False}), 400
+    
 
 
         
