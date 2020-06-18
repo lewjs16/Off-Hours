@@ -8,6 +8,9 @@ from datetime import datetime
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+#For login 
+LOGIN = Flask(__name__)
+
 # initializes database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -18,6 +21,7 @@ db = SQLAlchemy(app)
 # Init ma
 ma = Marshmallow(app)
 
+#Classes 
 class Streams(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     title = db.Column(db.String(80),nullable=False)
@@ -86,6 +90,8 @@ streams_schema_single = Streams_Schema(many = False)
 user_schema_single = User_Schema(many=False)
 questions_schema_single = Questions_Schema(many=False)
 
+#START STREAM FUNCTIONS---------------------------------------------------------------------
+
 #Adding a stream
 @app.route('/addStream', methods = ['POST'])
 def add_stream():
@@ -126,7 +132,10 @@ def update_stream(id):
     subject = request.json['subject']
     ownerid = request.json['ownerid']
 
-    update_stream = Streams.query.get(id)
+    try:
+        update_stream = Streams.query.get(id)
+     except IntegrityError:
+        return jsonify({"message": "Stream could not be found."}), 400
 
     update_stream.title = title
     update_stream.subject = subject
@@ -139,11 +148,35 @@ def update_stream(id):
 # Delete stream
 @app.route('/StreamDelete/<id>', methods = ['DELETE'])
 def delete_stream(id):
-    stream = Streams.query.get(id)
+    try:
+        stream = Streams.query.get(id)
+     except IntegrityError:
+        return jsonify({"message": "Stream could not be found."}), 400
     db.session.delete(stream)
     db.session.commit()
 
     return streams_schema_reg.jsonify(stream)
+
+#END STREAM FUNCTIONS---------------------------------------------------------------------
+
+#START USER FUNCTIONS---------------------------------------------------------------------
+
+#check if user is logged in 
+@app.route('/login_check', methods = ['GET', 'POST'])
+def login_check():
+    error = None
+    
+    if LOGIN.request.method == "POST":
+        username = LOGIN.request.form['username']
+        password = LOGIN.request.form['password']
+        clientID = "glsmk1f8nj211k9v1r916xbsgqnuq4"
+        secret = "fzisu9q67fhgx6wpg1yqd9fia52502"
+        r_token = requests.post("https://id.twitch.tv/oauth2/token",
+        {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
+        
+
+#END USER FUNCTIONS---------------------------------------------------------------------
+
 
 if __name__ == '__main__':
     app.run(debug=True)
