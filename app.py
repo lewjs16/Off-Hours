@@ -209,17 +209,16 @@ def login_check(id):
     try:
         user = Users.query.get(id)
         if user is None:
-            return ({"usernamae": "Not Available", "logid": False})
+            return ({"username": "Not Available", "logid": False})
 
         if user.time is 0:
-            return ({"usernamae": user.username, "logid": False})
+            return ({"username": user.username, "logid": False})
         else:
-            return ({"usernamae": user.username, "logid": True})
-            
-    except IntegrityError:
-        return jsonify({"usernamae": "Not Available", "logid": False}), 400
-    
+            return ({"username": user.username, "logid": True})
 
+    except IntegrityError:
+        return jsonify({"username": "Not Available", "logid": False}), 400
+    
 
         
 
