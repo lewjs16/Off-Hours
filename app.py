@@ -24,16 +24,16 @@ ma = Marshmallow(app)
 #Classes 
 class Subjects(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String(80),nullable=False)
+    subject = db.Column(db.String(80),nullable=False)
 
-    def __init__(self,id,name):
+    def __init__(self,id,subject):
         self.id = id
-        self.name = name
+        self.subject = subject
 
 class Streams(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     title = db.Column(db.String(80),nullable=False)
-    subject = db.Column(db.String(80),ForeignKey('subject.name'),nullable=False)
+    subject = db.Column(db.String(80),ForeignKey('subject.subject'),nullable=False)
     ownerid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
     streamimg = db.Column(db.String(80),default=True)
     vidnum = db.Column(db.Integer,nullable=True)
@@ -74,7 +74,7 @@ class Questions(db.Model):
 #Schema 
 class Subjects_Schema(ma.Schema):
     class Meta:
-        fields = ('id','name')
+        fields = ('id','subject')
 
 class Streams_Schema(ma.Schema):
     class Meta:
