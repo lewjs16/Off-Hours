@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from django.db import IntegrityError
 import os
 import json
 import requests
@@ -136,10 +135,8 @@ def get_streams():
 # Gettings a single stream
 @app.route('/Stream/<id>', methods = ['GET'])
 def get_stream(id):
-     try:
-        stream = Streams.query.get(id)
-     except IntegrityError:
-        return jsonify({"message": "Stream could not be found."}), 400
+     stream = Streams.query.get(id)
+
 
      result = streams_schema_single.dump(stream)
      return jsonify(result)
@@ -151,10 +148,7 @@ def update_stream(id):
     subject = request.json['subject']
     ownerid = request.json['ownerid']
 
-    try:
-        update_stream = Streams.query.get(id)
-    except IntegrityError:
-        return jsonify({"message": "Stream could not be found."}), 400
+    update_stream = Streams.query.get(id)
 
     update_stream.title = title
     update_stream.subject = subject
@@ -167,10 +161,7 @@ def update_stream(id):
 # Delete stream
 @app.route('/StreamDelete/<id>', methods = ['DELETE'])
 def delete_stream(id):
-    try:
-        stream = Streams.query.get(id)
-    except IntegrityError:
-        return jsonify({"message": "Stream could not be found."}), 400
+    stream = Streams.query.get(id)
     db.session.delete(stream)
     db.session.commit()
 
@@ -183,19 +174,14 @@ def delete_stream(id):
 #Check login
 @app.route('/login_check/<id>', methods = ['POST'])
 def login_check(id):
-    try:
-        user = Users.query.get(id)
-        if user is None:
-            return ({"username": "Not Available", "logid": False})
+    user = Users.query.get(id)
+    if user is None:
+        return ({"username": "Not Available", "logid": False})
 
-        if user.time is 0:
-            return ({"username": user.username, "logid": False})
-        else:
-            return ({"username": user.username, "logid": True})
-
-    except IntegrityError:
-        return jsonify({"username": "Not Available", "logid": False}), 400
-
+    if user.time is 0:
+        return ({"username": user.username, "logid": False})
+    else:
+        return ({"username": user.username, "logid": True})
 
 # login/add user to database
 @app.route('/login', methods = ['GET','POST'])
@@ -247,27 +233,6 @@ def login():
     }
     
     return jsonify(context)
-
-# Get new token for user 
-@app.route('/token/<id>', methods = ['POST'])
-def renew_token(id):
-    try:
-        user = Users.query.get(id)
-        if user is None:
-            return ({"token": "Not Available"})
-        else:
-            clientID = "hgzp49atoti7g7fzd9v4pkego3i7ae"
-            secret = "fzisu9q67fhgx6wpg1yqd9fia52502" # needs to be updated 
-            r_token = requests.post("https://id.twitch.tv/oauth2/token",
-            {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
-            user.token = json.loads(r_token.text)['access_token']
-            user.time = json.loads(r_token.text)['expires_in']
-
-            db.session.commit()
-
-            return ({"token": user.token})
-    except IntegrityError:
-        return jsonify({"token": "Not Available"}), 400
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
