@@ -272,6 +272,12 @@ def renew_token(id):
 
 #END USER FUNCTIONS---------------------------------------------------------------------
 
+#START TEST FUNCTIONS-------------------------------------------------------------------
+@app.route('/test', methods=['POST'])
+def test():
+    return jsonify({"test": "working"})
+#END TEST FUNCTIONS---------------------------------------------------------------------
+
 
 if __name__ == '__main__':
     app.run(debug=True)
