@@ -179,7 +179,6 @@ def delete_stream(id):
 #END STREAM FUNCTIONS---------------------------------------------------------------------
 
 #START USER FUNCTIONS---------------------------------------------------------------------
-#Interval for time
 
 #Check login
 @app.route('/login_check/<id>', methods = ['POST'])
@@ -247,7 +246,6 @@ def login():
         "loggedin" : app.session['loggedin']
     }
     
-    #NEEDS FIXING
     return jsonify(context)
 
 # Get new token for user 
