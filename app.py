@@ -49,15 +49,13 @@ class Streams(db.Model):
 class Users(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(80),nullable=False)
-    password = db.Column(db.String(80),nullable=False)
     token = db.Column(db.Integer,nullable=True)
     time = db.Column(db.Integer,nullable=True)
     userimg = db.Column(db.String(80),nullable=False)
 
-    def __init__(self,username,password, userimg):
+    def __init__(self,username, userimg):
         self.username = username
         self.userimg = userimg
-        self.password = password
 
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -89,7 +87,7 @@ class Streams_Schema(ma.Schema):
 
 class User_Schema(ma.Schema):
     class Meta: 
-        fields = ('id','username','password', 'userimg')
+        fields = ('id','username', 'userimg')
 
 class Questions_Schema(ma.Schema):
     class Meta: 
@@ -182,49 +180,15 @@ def delete_stream(id):
 #END STREAM FUNCTIONS---------------------------------------------------------------------
 
 #START USER FUNCTIONS---------------------------------------------------------------------
+#Interval for time
+intervals = (
+    ('days', 86400),    # 60 * 60 * 24
+    ('hours', 3600),    # 60 * 60
+    ('minutes', 60),
+    ('seconds', 1),
+    )
 
-# login/add user to database
-@app.route('/login', methods = ['GET'])
-def login():
-    username = request.json['username']
-    password = request.json['password']
-    userimg = request.json['userimg']
-
-    clientID = "glsmk1f8nj211k9v1r916xbsgqnuq4"
-    secret = "fzisu9q67fhgx6wpg1yqd9fia52502"
-    r_token = requests.post("https://id.twitch.tv/oauth2/token",
-    {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
-
-    new_user = Users(username, password, userimg)
-    new_user.token = json.loads(r_token.text)['access_token']
-    new_user.time = json.loads(r_token.text)['expires_in']
-
-    db.session.add(new_user)
-    db.session.commit()
-
-    return user_schema_single.jsonify(new_user)
-
-# Get new token for user 
-@app.route('/token/<id>', methods = ['POST'])
-def renew_token(id):
-    try:
-        user = Users.query.get(id)
-        if user is None:
-            return ({"token": "Not Available"})
-        else:
-            clientID = "glsmk1f8nj211k9v1r916xbsgqnuq4"
-            secret = "fzisu9q67fhgx6wpg1yqd9fia52502"
-            r_token = requests.post("https://id.twitch.tv/oauth2/token",
-            {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
-            user.token = json.loads(r_token.text)['access_token']
-            user.time = json.loads(r_token.text)['expires_in']
-
-            db.session.commit()
-
-            return ({"token": user.token})
-    except IntegrityError:
-        return jsonify({"token": "Not Available"}), 400
-
+#Check login
 @app.route('/login_check/<id>', methods = ['POST'])
 def login_check(id):
     try:
@@ -239,7 +203,68 @@ def login_check(id):
 
     except IntegrityError:
         return jsonify({"username": "Not Available", "logid": False}), 400
+
+
+# login/add user to database
+@app.route('/login', methods = ['GET','POST'])
+def login():
+    # dont want to make a new user each time front end checks if we are logged in
+    # only when we log in (POST) AND when the user is not already in our database
+    if app.request.method == 'POST':
+      
+      	# get token
+        client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
+        auth_code = request.json['code']
+        redirect_uri = "https://localhost:3000/login/"
+        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
+        
+        # store token and oher info
+        app.session['token'] = json.loads(data)['access_token']
+        app.session['refresh_token'] = json.loads(data)['refresh_token']
+        app.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
+        app.session['loggedin'] = True
+        
+        #put api call for logname here
+        logname = "joe"
+
+        # get username
+        app.session['logname'] = logname
+        
+        # check if user is in database
+        user = User.query.filter_by(username=app.session['logname']).first()
+        if(!user):
+          
+          # add user to database
     
+    context = {
+        "logname" : app.session['logname'],
+        "loggedin" : app.session['loggedin']
+    }
+    
+    #gottafigure this one out
+    return jsonify(context)
+
+# Get new token for user 
+@app.route('/token/<id>', methods = ['POST'])
+def renew_token(id):
+    try:
+        user = Users.query.get(id)
+        if user is None:
+            return ({"token": "Not Available"})
+        else:
+            clientID = "hgzp49atoti7g7fzd9v4pkego3i7ae"
+            secret = "fzisu9q67fhgx6wpg1yqd9fia52502" # needs to be updated 
+            r_token = requests.post("https://id.twitch.tv/oauth2/token",
+            {"client_id" : clientID, "client_secret" :  secret,"grant_type" :'client_credentials', "redirect_uri" :'http://localhost'})
+            user.token = json.loads(r_token.text)['access_token']
+            user.time = json.loads(r_token.text)['expires_in']
+
+            db.session.commit()
+
+            return ({"token": user.token})
+    except IntegrityError:
+        return jsonify({"token": "Not Available"}), 400
+
 
 #END USER FUNCTIONS---------------------------------------------------------------------
 
