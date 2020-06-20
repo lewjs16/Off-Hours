@@ -38,7 +38,6 @@ class Streams(db.Model):
     title = db.Column(db.String(80),nullable=False)
     subject = db.Column(db.String(80),db.ForeignKey('subjects.id'),nullable=False)
     ownerid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
-    streamimg = db.Column(db.String(80),default=True)
     vidnum = db.Column(db.Integer,nullable=True)
 
     def __init__(self,title,subject,ownerid):
@@ -49,13 +48,13 @@ class Streams(db.Model):
 class Users(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(80),nullable=False)
+    name = db.Column(db.String(80),nullable=False)
     token = db.Column(db.Integer,nullable=True)
     time = db.Column(db.Integer,nullable=True)
-    userimg = db.Column(db.String(80),nullable=False)
 
-    def __init__(self,username, userimg):
+    def __init__(self,username, name):
         self.username = username
-        self.userimg = userimg
+        self.name = name
 
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -87,7 +86,7 @@ class Streams_Schema(ma.Schema):
 
 class User_Schema(ma.Schema):
     class Meta: 
-        fields = ('id','username', 'userimg')
+        fields = ('id','username', 'name')
 
 class Questions_Schema(ma.Schema):
     class Meta: 
@@ -181,12 +180,6 @@ def delete_stream(id):
 
 #START USER FUNCTIONS---------------------------------------------------------------------
 #Interval for time
-intervals = (
-    ('days', 86400),    # 60 * 60 * 24
-    ('hours', 3600),    # 60 * 60
-    ('minutes', 60),
-    ('seconds', 1),
-    )
 
 #Check login
 @app.route('/login_check/<id>', methods = ['POST'])
@@ -212,36 +205,49 @@ def login():
     # only when we log in (POST) AND when the user is not already in our database
     if app.request.method == 'POST':
       
-      	# get token
+      	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         auth_code = request.json['code']
         redirect_uri = "https://localhost:3000/login/"
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
-        # store token and oher info
+        # store token and other info
         app.session['token'] = json.loads(data)['access_token']
         app.session['refresh_token'] = json.loads(data)['refresh_token']
         app.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
         app.session['loggedin'] = True
         
-        #put api call for logname here
-        logname = "joe"
+         # defining a params dict for the parameters to be sent to the API 
+        PARAMS = {
+            "Client-ID" : client_id,
+            "Authorization" : "OAuth "+app.session['token']
+        } 
+
+        # sending GET request and saving the response as response object 
+        r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", params = PARAMS) 
+        username = json.loads(r_user_info.text)['display_name']
+        name = json.loads(r_user_info.text)['name']
 
         # get username
-        app.session['logname'] = logname
+        app.session['username'] = username
+        app.session['name'] = name
         
         # check if user is in database
-        user = User.query.filter_by(username=app.session['logname']).first()
-        if(!user):
-          
-          # add user to database
+        user = Users.query.filter_by(username=app.session['username']).first()
+
+        #if it is not found
+        if user is None:
+            new_user = Users(username,name)
+            db.session.add(new_user)
+            db.session.commit()
     
     context = {
-        "logname" : app.session['logname'],
+        "username" : app.session['username'],
+        "name"     : app.session['name'],
         "loggedin" : app.session['loggedin']
     }
     
-    #gottafigure this one out
+    #NEEDS FIXING
     return jsonify(context)
 
 # Get new token for user 
