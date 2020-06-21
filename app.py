@@ -191,11 +191,14 @@ def login():
     # only when we log in (POST) AND when the user is not already in our database
     if request.method == 'POST':
       
+
       	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         secret = "q1hod728vx9dpxnxoypyngsbvrn4kg"
         redirect_uri = "https://off-hours-backend.herokuapp.com/login/"
-        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret="+secret +"&grant_type=authorization_code&redirect_uri="+redirect_uri)
+
+        code = requests.get('https://id.twitch.tv/oauth2/authorize?response_type=code&client_id='+ client_id + "&redirect_uri=" + redirect_uri)
+        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret="+secret +"&code="+code + "&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         return jsonify(data.text)
         # store token and other info
