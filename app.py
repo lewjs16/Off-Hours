@@ -227,13 +227,11 @@ def login():
             db.session.add(new_user)
             db.session.commit()
     
-    context = {
-        "username" : flask.session['username'],
-        "name"     : flask.session['name'],
-        "loggedin" : flask.session['loggedin']
-    }
-    
-    return jsonify(context)
+    return jsonify(
+        username = flask.session['username'],
+        name = flask.session['name'],
+        loggedin = flask.session['loggedin']
+    )
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
