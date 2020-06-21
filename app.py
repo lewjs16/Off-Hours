@@ -198,10 +198,10 @@ def login():
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         # store token and other info
-        access_token = json.loads(data)['access_token']
+        access_token = json.loads(data.text)['access_token']
         #refresh_token = json.loads(data)['refresh_token']
-        #expires_in= datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
-        expires_in  =0
+        expires_in= datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
+        #expires_in  =0
         loggedin = True
         
          # defining a params dict for the parameters to be sent to the API 
