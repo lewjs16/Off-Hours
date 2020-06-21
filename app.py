@@ -185,7 +185,7 @@ def login_check(id):
         return ({"username": user.username, "logid": True})
 
 # login/add user to database
-@app.route('/login', methods = ['GET','POST'])
+@app.route('/login/', methods = ['GET','POST'])
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
@@ -195,7 +195,7 @@ def login():
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         secret = "q1hod728vx9dpxnxoypyngsbvrn4kg"
         auth_code = "code"
-        redirect_uri = "https://off-hours-backend.herokuapp.com/login"
+        redirect_uri = "https://off-hours-backend.herokuapp.com/login/"
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret="+secret +"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         return jsonify(data.text)
