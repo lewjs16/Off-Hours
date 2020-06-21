@@ -236,9 +236,9 @@ def login():
             db.commit()
     
     context = {
-        "username" : username,
-        "name"     : name,
-        "loggedin" : loggedin
+        "username" : 'username',
+        "name"     : 'name',
+        "loggedin" : 'loggedin'
     }
     
     return jsonify(context)
