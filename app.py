@@ -192,7 +192,7 @@ def login():
       
       	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
-        auth_code = requests.json['code']
+        auth_code = app.requests.args.get("code", default="")
         redirect_uri = "https://localhost:3000/login/"
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
