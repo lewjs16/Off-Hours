@@ -189,29 +189,24 @@ def login_check(id):
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-    if request.method == 'POST':
+    if app.request.method == 'POST':
       
-
       	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
-        secret = "q1hod728vx9dpxnxoypyngsbvrn4kg"
+        auth_code = flask.request.args.get("code", default="",type=str)
         redirect_uri = "https://localhost:3000/login/"
-
-        code_json = requests.get('https://id.twitch.tv/oauth2/authorize?response_type=code&client_id='+ client_id + "&redirect_uri=" + redirect_uri)
-        code = json.loads(code_json.text)['code']
-        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret="+secret +"&code="+code + "&grant_type=authorization_code&redirect_uri="+redirect_uri)
+        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         # store token and other info
-        access_token = json.loads(data.text)['access_token']
-        #refresh_token = json.loads(data)['refresh_token']
-        expires_in= datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
-        #expires_in  =0
-        loggedin = True
+        flask.session['token'] = json.loads(data)['access_token']
+        flask.session['refresh_token'] = json.loads(data)['refresh_token']
+        flask.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
+        flask.session['loggedin'] = True
         
          # defining a params dict for the parameters to be sent to the API 
         PARAMS = {
             "Client-ID" : client_id,
-            "Authorization" : "OAuth "+access_token
+            "Authorization" : "OAuth "+app.session['token']
         } 
 
         # sending GET request and saving the response as response object 
@@ -220,30 +215,22 @@ def login():
         name = json.loads(r_user_info.text)['name']
 
         # get username
-        #db.session['username'] = username
-        #db.session['name'] = name
+        flask.session['username'] = username
+        flask.session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username=username).first()
+        user = Users.query.filter_by(username=app.session['username']).first()
 
         #if it is not found
         if user is None:
             new_user = Users(username,name)
-            new_user.token = access_token
-            new_user.time = expires_in
-            new_user.loggedin = loggedin
-            new_user.lo
             db.session.add(new_user)
             db.session.commit()
-        else:
-            user.token = access_token
-            user.time =expires_in
-            db.commit()
     
     context = {
-        "username" : 'username',
-        "name"     : 'name',
-        "loggedin" : 'loggedin'
+        "username" : flask.session['username'],
+        "name"     : flask.session['name'],
+        "loggedin" : flask.session['loggedin']
     }
     
     return jsonify(context)
