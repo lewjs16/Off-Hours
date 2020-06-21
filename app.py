@@ -50,6 +50,7 @@ class Users(db.Model):
     name = db.Column(db.String(80),nullable=False)
     token = db.Column(db.Integer,nullable=True)
     time = db.Column(db.Integer,nullable=True)
+    loggedin = db.Column(db.Boolean, nullable=False)
 
     def __init__(self,username, name):
         self.username = username
@@ -197,10 +198,10 @@ def login():
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         # store token and other info
-        db.session['token'] = json.loads(data)['access_token']
-        db.session['refresh_token'] = json.loads(data)['refresh_token']
-        db.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
-        db.session['loggedin'] = True
+        access_token = json.loads(data)['access_token']
+        #refresh_token = json.loads(data)['refresh_token']
+        expires_in= datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
+        loggedin = True
         
          # defining a params dict for the parameters to be sent to the API 
         PARAMS = {
@@ -214,22 +215,30 @@ def login():
         name = json.loads(r_user_info.text)['name']
 
         # get username
-        db.session['username'] = username
-        db.session['name'] = name
+        #db.session['username'] = username
+        #db.session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username=db.session['username']).first()
+        user = Users.query.filter_by(username=username).first()
 
         #if it is not found
         if user is None:
             new_user = Users(username,name)
+            new_user.token = access_token
+            new_user.time = expires_in
+            new_user.loggedin = loggedin
+            new_user.lo
             db.session.add(new_user)
             db.session.commit()
+        else:
+            user.token = access_token
+            user.time =expires_in
+            db.commit()
     
     context = {
-        "username" : db.session['username'],
-        "name"     : db.session['name'],
-        "loggedin" : db.session['loggedin']
+        "username" : username,
+        "name"     : name,
+        "loggedin" : loggedin
     }
     
     return jsonify(context)
