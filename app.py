@@ -241,7 +241,8 @@ def login():
         "loggedin" : 'loggedin'
     }
     
-    return jsonify(context)
+    return jsonify({"test": "working"})
+    #return jsonify(context)
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
