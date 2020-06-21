@@ -195,7 +195,8 @@ def login():
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         auth_code = flask.request.args.get("code", default="",type=str)
         redirect_uri = "https://localhost:3000/login/"
-        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
+        state = "fgb7pgr2g24vwrfl6auc1miz8jtsgg"
+        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri+"&state=" + state)
         
         # store token and other info
         flask.session['token'] = json.loads(data)['access_token']
