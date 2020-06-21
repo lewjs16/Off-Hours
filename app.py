@@ -194,9 +194,8 @@ def login():
       	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         secret = "q1hod728vx9dpxnxoypyngsbvrn4kg"
-        auth_code = "code"
         redirect_uri = "https://off-hours-backend.herokuapp.com/login/"
-        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret="+secret +"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
+        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret="+secret +"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         return jsonify(data.text)
         # store token and other info
@@ -209,7 +208,7 @@ def login():
          # defining a params dict for the parameters to be sent to the API 
         PARAMS = {
             "Client-ID" : client_id,
-            "Authorization" : "OAuth "+db.session['token']
+            "Authorization" : "OAuth "+access_token
         } 
 
         # sending GET request and saving the response as response object 
