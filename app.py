@@ -197,6 +197,7 @@ def login():
         redirect_uri = "https://off-hours-backend.herokuapp.com/login"
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
+        return jsonify(data)
         # store token and other info
         access_token = json.loads(data.text)['access_token']
         #refresh_token = json.loads(data)['refresh_token']
