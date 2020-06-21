@@ -197,15 +197,15 @@ def login():
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         # store token and other info
-        app['token'] = json.loads(data)['access_token']
-        app['refresh_token'] = json.loads(data)['refresh_token']
-        app['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
-        app['loggedin'] = True
+        db.session['token'] = json.loads(data)['access_token']
+        db.session['refresh_token'] = json.loads(data)['refresh_token']
+        db.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
+        db.session['loggedin'] = True
         
          # defining a params dict for the parameters to be sent to the API 
         PARAMS = {
             "Client-ID" : client_id,
-            "Authorization" : "OAuth "+app['token']
+            "Authorization" : "OAuth "+db.session['token']
         } 
 
         # sending GET request and saving the response as response object 
@@ -214,11 +214,11 @@ def login():
         name = json.loads(r_user_info.text)['name']
 
         # get username
-        app['username'] = username
-        app['name'] = name
+        db.session['username'] = username
+        db.session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username=app['username']).first()
+        user = Users.query.filter_by(username=db.session['username']).first()
 
         #if it is not found
         if user is None:
@@ -227,9 +227,9 @@ def login():
             db.session.commit()
     
     context = {
-        "username" : app['username'],
-        "name"     : app['name'],
-        "loggedin" : app['loggedin']
+        "username" : db.session['username'],
+        "name"     : db.session['name'],
+        "loggedin" : db.session['loggedin']
     }
     
     return jsonify(context)
