@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify
+from flask import make_response, current_app
+from flask.ext.cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
@@ -8,6 +10,8 @@ from datetime import datetime
 
 # initializes app
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
+cors = CORS(app, resources={r"/login/": {"origins": "*"}})
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 #For login 
@@ -186,15 +190,19 @@ def login_check(id):
 
 # login/add user to database
 @app.route('/login/', methods = ['GET','POST'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
+    return jsonify(
+        username = "hello",
+        name = "test",
+        loggedin = "test"
+    )
     if app.request.method == 'POST':
-      
       	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         auth_code = flask.request.args.get("code", default="",type=str)
-        auth_code.headers.add('Access-Control-Allow-Origin', 'https://offhours.herokuapp.com')
         redirect_uri = "https://offhours.herokuapp.com/login/"
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
