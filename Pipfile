@@ -12,6 +12,7 @@ flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 gunicorn = "*"
 requests = "*"
+flask.ext.cors = "*"
 
 [requires]
 python_version = "3.6"
