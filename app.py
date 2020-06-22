@@ -9,7 +9,7 @@ from datetime import datetime
 # initializes app
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
-cors = CORS(app, resources={r"/login/": {"origins": "http://offhours.herokuapp.com"}})
+cors = CORS(app, resources={r"/login/": {"origins": "*"}})
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 #For login 
@@ -188,7 +188,7 @@ def login_check(id):
 
 # login/add user to database
 @app.route('/login/', methods = ['GET','POST'])
-@cross_origin(origin='https://offhours.herokuapp.com',headers=['Content- Type','Authorization'])
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
