@@ -189,7 +189,7 @@ def login_check(id):
         return ({"username": user.username, "logid": True})
 
 # login/add user to database
-@app.route('/login/', methods = ['GET','POST'])
+@app.route(r"/login/.*", methods = ['GET','POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login():
     # dont want to make a new user each time front end checks if we are logged in
