@@ -9,11 +9,10 @@ verify_ssl = true
 flask = "*"
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
-flask-cors = "*"
+flask_cors = "*"
 marshmallow-sqlalchemy = "*"
 gunicorn = "*"
 requests = "*"
-flask.ext.cors = "*"
 
 [requires]
 python_version = "3.6"
