@@ -11,7 +11,8 @@ from datetime import datetime
 # initializes app
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
-cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
+#cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
+cors = CORS(app, resources={r"/login": {"origins": "*"}})
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 #For login 
@@ -189,11 +190,13 @@ def login_check(id):
         return ({"username": user.username, "logid": True})
 
 # login/add user to database
-@app.route("/login/?code=<n>", methods = ['GET','POST'])
+@app.route("/login", methods = ['GET','POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
-def login(n):
+def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
+
+    
     return jsonify(
         username = "hello",
         name = "test",
