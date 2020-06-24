@@ -12,7 +12,8 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
-cors = CORS(app, resources={r"/login": {"origins": "*"}})
+#cors = CORS(app, resources={r"/login": {"origins": "*"}})
+CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 #For login 
