@@ -234,7 +234,7 @@ def login():
             new_user = Users(username,name)
             db.session.add(new_user)
             db.session.commit()
-    if not flask.session.get('loggedin'):
+    if not flask.session.has_key('loggedin'):
         flask.session['loggedin']= False
         return jsonify(
             loggedin = flask.session['loggedin']
