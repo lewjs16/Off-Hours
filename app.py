@@ -116,6 +116,8 @@ user_schema_single = User_Schema(many=False)
 questions_schema_single = Questions_Schema(many=False)
 subjects_schema_single = Subjects_Schema(many = False)
 
+# all users start logged out 
+flask.session['loggedin']= False
 #START STREAM FUNCTIONS---------------------------------------------------------------------
 
 #Adding a stream
@@ -234,11 +236,7 @@ def login():
             new_user = Users(username,name)
             db.session.add(new_user)
             db.session.commit()
-    if flask.session.get('loggedin') is None:
-        flask.session['loggedin']= False
-        return jsonify(
-            loggedin = flask.session['loggedin']
-        )
+
     return jsonify(
         username = flask.session['username'],
         name = flask.session['name'],
