@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask import make_response, current_app
-from flask.ext.cors import CORS, cross_origin
+from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
@@ -196,7 +196,7 @@ def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
 
-    
+
     return jsonify(
         username = "hello",
         name = "test",
