@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
@@ -234,7 +234,7 @@ def login():
             new_user = Users(username,name)
             db.session.add(new_user)
             db.session.commit()
-    if not flask.session.has_key('loggedin'):
+    if flask.session.get('loggedin') is None:
         flask.session['loggedin']= False
         return jsonify(
             loggedin = flask.session['loggedin']
