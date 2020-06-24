@@ -12,7 +12,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
-cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
+cors = CORS(app, resources={r"/login": {"origins": "*"}})
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 #For login 
@@ -190,7 +190,7 @@ def login_check(id):
         return ({"username": user.username, "logid": True})
 
 # login/add user to database
-@app.route("/login/?code=<id>", methods = ['GET','POST'])
+@app.route("/login", methods = ['GET','POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login(id):
     # dont want to make a new user each time front end checks if we are logged in
