@@ -176,7 +176,7 @@ def login():
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         data = {
             "Client-ID" : client_id,
-            "Authorization" : "OAuth "+app.session['token']
+            "Authorization" : "OAuth "+ flask.session['token']
         } 
 
         # sending GET request and saving the response as response object 
@@ -190,7 +190,7 @@ def login():
         flask.session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username=app.session['username']).first()
+        user = Users.query.filter_by(username= flask.session['username']).first()
 
         #if it is not found
         if user is None:
