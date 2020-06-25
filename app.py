@@ -208,7 +208,7 @@ def login():
             loggedin = flask.session['loggedin']
         )
     if flask.request.method == 'POST':
-        flask.session['token'] = flask.request.args.get("token", default="",type=str)
+        flask.session['token'] = request.args.get("token", default="",type=str)
         flask.session['loggedin'] = True
         
         # defining a params dict for the parameters to be sent to the API 
@@ -249,8 +249,4 @@ def test():
     return jsonify({"test": "working"})
 #END TEST FUNCTIONS---------------------------------------------------------------------
 
-
-if __name__ == '__main__':
-    app.config['SESSION_TYPE'] = 'filesystem'
-    app.run(debug=True)
 
