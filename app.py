@@ -208,23 +208,12 @@ def login():
             loggedin = flask.session['loggedin']
         )
     if flask.request.method == 'POST':
-      	# get tokenfrom Twitch API
-        client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
-        client_secret = "yejdl550a2zan6t4bb0mc3k8xbsvbz"
-        auth_code = flask.request.args.get("code", default="",type=str)
-        #auth_code = "32q29ae62768cu7658a4dflvocp2m4"
-        redirect_uri = "https://offhours.herokuapp.com/login/"
-        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret=" + client_secret+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
-        
-        # store token and other info
-        #return jsonify(json.loads(data.text))
-        token_data = json.loads(data.text)
-        flask.session['token'] = token_data['access_token']
-        flask.session['refresh_token'] = token_data['refresh_token']
-        flask.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,token_data['expires_in'])
+        data = request.get_json(silent=True)
+        flask.session['token'] = data['token']
         flask.session['loggedin'] = True
         
-         # defining a params dict for the parameters to be sent to the API 
+        # defining a params dict for the parameters to be sent to the API 
+        client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         PARAMS = {
             "Client-ID" : client_id,
             "Authorization" : "OAuth "+app.session['token']
