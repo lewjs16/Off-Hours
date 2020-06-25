@@ -208,7 +208,7 @@ def login():
             loggedin = flask.session['loggedin']
         )
     if flask.request.method == 'POST':
-        data = request.get_json(silent=True)
+        data = request.json
         flask.session['token'] = data['token']
         flask.session['loggedin'] = True
         
