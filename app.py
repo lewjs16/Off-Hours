@@ -176,7 +176,7 @@ def login():
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         data = {
             "Client-ID" : client_id,
-            "Authorization" : "OAuth "+ flask.session['token']
+            "Authorization" : flask.session['token']
         } 
 
         # sending GET request and saving the response as response object 
