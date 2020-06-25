@@ -19,6 +19,7 @@ from datetime import datetime
 # initializes app
 app = Flask(__name__)
 SESSION_TYPE = "redis"
+SESSION_REDIS = redis.from_url('*')
 PERMANENT_SESSSION_LIFETIME = 1800
 app.config.update(SECRET_KEY =  os.urandom(24))
 app.config.from_object(__name__)
