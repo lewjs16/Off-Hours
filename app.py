@@ -9,6 +9,7 @@ import flask_session
 import datetime
 import redis
 from flask_session import Session
+from flask_sqlalchemy_session import flask_scoped_session
 from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
 from flask_cors import CORS, cross_origin
@@ -18,12 +19,9 @@ from datetime import datetime
 
 # initializes app
 app = Flask(__name__)
-SESSION_TYPE = "redis"
-SESSION_REDIS = redis.from_url('*')
-PERMANENT_SESSSION_LIFETIME = 1800
+session = flask_scoped_session(session_factory, app)
 app.config.update(SECRET_KEY =  os.urandom(24))
 app.config.from_object(__name__)
-Session(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
