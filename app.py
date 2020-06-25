@@ -145,7 +145,7 @@ def get_streams():
     return jsonify(result)
 
 # Gettings a single stream
-@app.route('/Stream/<id>', methods = ['GET'])
+@app.route('/stream/<id>', methods = ['GET','POST'])
 def get_stream(id):
      stream = Streams.query.get(id)
 
@@ -183,17 +183,6 @@ def delete_stream(id):
 
 #START USER FUNCTIONS---------------------------------------------------------------------
 
-#Check login
-@app.route('/login_check/<id>', methods = ['POST'])
-def login_check(id):
-    user = Users.query.get(id)
-    if user is None:
-        return ({"username": "Not Available", "logid": False})
-
-    if user.time is 0:
-        return ({"username": user.username, "logid": False})
-    else:
-        return ({"username": user.username, "logid": True})
 
 # login/add user to database
 @app.route("/login", methods = ['GET','POST'])
@@ -213,13 +202,13 @@ def login():
         
         # defining a params dict for the parameters to be sent to the API 
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
-        PARAMS = {
+        data = {
             "Client-ID" : client_id,
             "Authorization" : "OAuth "+app.session['token']
         } 
 
         # sending GET request and saving the response as response object 
-        r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", params = PARAMS) 
+        r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", data=data) 
         return_data = json.loads(r_user_info.text)
         username = return_data['display_name']
         name = return_data['name']
@@ -235,7 +224,12 @@ def login():
         if user is None:
             new_user = Users(username,name)
             db.session.add(new_user)
-            db.session.commit()  
+            db.session.commit()
+        return jsonify(
+            username = flask.session['username'],
+            name = flask.session['name'],
+            loggedin = flask.session['loggedin']
+        )
     return jsonify(
         loggedin = False
     )
