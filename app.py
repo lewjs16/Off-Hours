@@ -193,10 +193,11 @@ def login():
         
         # check if user is in database
         user = Users.query.filter_by(username= flask.session['username']).first()
+        live = False; # Default
 
         #if it is not found
         if user is None:
-            new_user = Users(username,name)
+            new_user = Users(username,name, live)
             db.session.add(new_user)
             db.session.commit()
         return jsonify(
