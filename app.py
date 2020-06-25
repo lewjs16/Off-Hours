@@ -148,17 +148,6 @@ def get_stream():
         isLive = live
     )
 
-@app.route('/all', methods = ['GET'])
-def get_stream():
-    streamers = []
-    query = Users.query.filter_by(live=True).all()
-    for user in query:
-        streamers.append({
-            'username': user.username,
-            'name' : user.name
-        })
-    return jsonify(streamers=streamers)
-
 
 #START USER FUNCTIONS---------------------------------------------------------------------
 # Gettings a single stream
