@@ -208,8 +208,7 @@ def login():
             loggedin = flask.session['loggedin']
         )
     if flask.request.method == 'POST':
-        data = request.get_json(silent=True)
-        flask.session['token'] = data['token']
+        flask.session['token'] = flask.request.args.get("token", default="",type=str)
         flask.session['loggedin'] = True
         
         # defining a params dict for the parameters to be sent to the API 
