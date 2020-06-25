@@ -7,6 +7,7 @@ import flask_sqlalchemy
 import flask_marshmallow
 import flask_session
 import datetime
+import redis
 from flask_session import Session
 from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
