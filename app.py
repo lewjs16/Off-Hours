@@ -9,15 +9,15 @@ import flask_session
 import datetime
 import redis
 from flask_session import Session
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from flask_sqlalchemy_session import flask_scoped_session
 from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from datetime import datetime
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from flask_sqlalchemy_session import flask_scoped_session
 
 # initializes app
 app = Flask(__name__)
