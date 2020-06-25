@@ -221,7 +221,7 @@ def login():
         token_data = json.loads(data.text)
         flask.session['token'] = token_data['access_token']
         flask.session['refresh_token'] = token_data['refresh_token']
-        flask.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
+        flask.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,token_data['expires_in'])
         flask.session['loggedin'] = True
         
          # defining a params dict for the parameters to be sent to the API 
