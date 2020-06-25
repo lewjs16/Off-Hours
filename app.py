@@ -176,14 +176,16 @@ def login():
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         data = {
             "Client-ID" : client_id,
-            "Authorization" : flask.session['token']
+            "Authorization" : "OAuth "+ flask.session['token']
         } 
 
         # sending GET request and saving the response as response object 
         r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", data=data) 
         return_data = json.loads(r_user_info.text)
-        username = return_data['display_name']
-        name = return_data['name']
+        #username = return_data['display_name']
+        #name = return_data['name']
+        username = "test"
+        name = "again"
 
         # get username
         flask.session['username'] = username
@@ -213,6 +215,7 @@ def login():
 @app.route('/test', methods=['GET'])
 def test():
     return jsonify({"test": "working"})
+
 #END TEST FUNCTIONS---------------------------------------------------------------------
 
 
