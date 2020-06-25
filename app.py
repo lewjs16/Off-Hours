@@ -201,6 +201,12 @@ def login_check(id):
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
+    if flask.session.get('logged_in') and flask.session['loggedin']:
+        return jsonify(
+            username = flask.session['username'],
+            name = flask.session['name'],
+            loggedin = flask.session['loggedin']
+        )
     if flask.request.method == 'POST':
       	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
@@ -241,18 +247,10 @@ def login():
         if user is None:
             new_user = Users(username,name)
             db.session.add(new_user)
-            db.session.commit()
-
-    if flask.session.get('logged_in') and flask.session['loggedin']:
-        return jsonify(
-            username = flask.session['username'],
-            name = flask.session['name'],
-            loggedin = flask.session['loggedin']
-        )
-    else:
-        return jsonify(
-            loggedin = False
-        )
+            db.session.commit()  
+    return jsonify(
+        loggedin = False
+    )
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
