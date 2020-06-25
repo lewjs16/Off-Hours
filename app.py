@@ -217,7 +217,7 @@ def login():
         data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret=" + client_secret+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         # store token and other info
-        #return jsonify(json.loads(data.text))
+        return jsonify(json.loads(data.text))
         token_data = json.loads(data.text)
         flask.session['token'] = token_data['access_token']
         flask.session['refresh_token'] = token_data['refresh_token']
