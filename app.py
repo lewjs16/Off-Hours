@@ -1,12 +1,16 @@
+import os
+import json
+import requests
+import flask
+import flask_cors
+import flask_sqlalchemy
+import flask_marshmallow
+import datetime
 from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-import os
-import json
-import requests
-import flask
 from datetime import datetime
 
 # initializes app
@@ -200,14 +204,16 @@ def login():
     if flask.request.method == 'POST':
       	# get tokenfrom Twitch API
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
+        client_secret = "yejdl550a2zan6t4bb0mc3k8xbsvbz"
         auth_code = flask.request.args.get("code", default="",type=str)
-        #auth_code = "9ek62h28gih37fci4lpe887e5t7bru"
+        #auth_code = "b867slj4apmbqqdgl0vl8esxxgzvbh"
         redirect_uri = "https://offhours.herokuapp.com/login/"
-        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
+        data = requests.post("https://id.twitch.tv/oauth2/token?client_id="+client_id+"&client_secret=" + client_secret+"&code="+auth_code+"&grant_type=authorization_code&redirect_uri="+redirect_uri)
         
         # store token and other info
-        flask.session['token'] = json.loads(data)['access_token']
-        flask.session['refresh_token'] = json.loads(data)['refresh_token']
+        #return jsonify(json.loads(data.text))
+        flask.session['token'] = json.loads(data.text)['access_token']
+        flask.session['refresh_token'] = json.loads(data.text)['refresh_token']
         flask.session['expiration_date'] = datetime.now() +  datetime.timedelta(0,json.loads(data)['expires_in'])
         flask.session['loggedin'] = True
         
