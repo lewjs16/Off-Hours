@@ -8,7 +8,6 @@ import flask_marshmallow
 import flask_session
 import datetime
 import redis
-import sys
 from flask_session import Session
 from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
@@ -47,8 +46,6 @@ db = SQLAlchemy(app)
 # Init ma
 ma = Marshmallow(app)
 
-
-original_stdout = sys.stdout # Save a reference to the original standard output
 
 #Classes 
 # class Subjects(db.Model):
@@ -173,6 +170,7 @@ def login():
             loggedin = session['loggedin']
         )
     if flask.request.method == 'POST':
+        sample = open('message.txt', 'w') 
         session['token'] = request.args.get("token", default="",type=str)
         session['loggedin'] = True
         
@@ -187,10 +185,9 @@ def login():
         # sending GET request and saving the response as response object 
         r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", data=data) 
         return_data = json.loads(r_user_info.text)
-        with open('message.txt', 'w') as f:
-            sys.stdout = f # Change the standard output to the file we created.
-            print(return_data)
-            sys.stdout = original_stdout # Reset the standard output to its original value
+        print('Test', file = sample)
+        print(r_user_info.text, file = sample) 
+        sample.close() 
         username = return_data['display_name']
         name = return_data['name']
         #username = "test"
