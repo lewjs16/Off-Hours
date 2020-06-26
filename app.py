@@ -175,14 +175,14 @@ def login():
         
         # defining a params dict for the parameters to be sent to the API 
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
-        data = {
-            "client_id" : client_id,
-            "authorization" : "OAuth "+ session['token'],
-            "scope": "user_read"
+        headers = {
+            "Accept" : "application/vnd.twitchtv.v5+json",
+            "Client-ID" : client_id,
+            "Authorization" : "OAuth "+ session['token'],
         } 
 
         # sending GET request and saving the response as response object 
-        r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", data=data) 
+        r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user",headers = headers) 
         return_data = json.loads(r_user_info.text)
         username = return_data['display_name']
         name = return_data['name']
