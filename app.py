@@ -183,8 +183,8 @@ def login():
 
         # sending GET request and saving the response as response object 
         r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user",headers = headers) 
-        return_data = json.loads(r_user_info.text)
-        username = return_data['display_name']
+        return_data = r_user_info.json()
+        username = return_data["display_name"]
         name = return_data['name']
         #username = "test"
         #name = "again"
