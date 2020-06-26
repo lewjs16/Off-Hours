@@ -160,17 +160,19 @@ def get_stream():
 @app.route("/login", methods = ['GET','POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login():
+    conn = engine.connect()
+    session = Session(bind=conn)
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-    if flask.session.get('logged_in') and flask.session['loggedin']:
+    if session.get('logged_in') and session['loggedin']:
         return jsonify(
-            username = flask.session['username'],
-            name = flask.session['name'],
-            loggedin = flask.session['loggedin']
+            username = session['username'],
+            name = session['name'],
+            loggedin = session['loggedin']
         )
     if flask.request.method == 'POST':
-        flask.session['token'] = request.args.get("token", default="",type=str)
-        flask.session['loggedin'] = True
+        session['token'] = request.args.get("token", default="",type=str)
+        session['loggedin'] = True
         
         # defining a params dict for the parameters to be sent to the API 
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
@@ -183,17 +185,17 @@ def login():
         # sending GET request and saving the response as response object 
         r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", data=data) 
         return_data = json.loads(r_user_info.text)
-        #username = return_data['display_name']
-        #name = return_data['name']
-        username = "test"
-        name = "again"
+        username = return_data['display_name']
+        name = return_data['name']
+        #username = "test"
+        #name = "again"
 
         # get username
-        flask.session['username'] = username
-        flask.session['name'] = name
+        session['username'] = username
+        session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username= flask.session['username']).first()
+        user = Users.query.filter_by(username= session['username']).first()
         live = False; # Default
 
         #if it is not found
@@ -202,9 +204,9 @@ def login():
             db.session.add(new_user)
             db.session.commit()
         return jsonify(
-            username = flask.session['username'],
-            name = flask.session['name'],
-            loggedin = flask.session['loggedin']
+            username = session['username'],
+            name = session['name'],
+            loggedin = session['loggedin']
         )
     return jsonify(
         loggedin = False
