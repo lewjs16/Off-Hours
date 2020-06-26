@@ -160,8 +160,6 @@ def get_stream():
 @app.route("/login", methods = ['GET','POST'])
 @cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def login():
-    conn = engine.connect()
-    session = Session(bind=conn)
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
     if session.get('logged_in') and session['loggedin']:
