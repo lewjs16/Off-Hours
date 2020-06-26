@@ -183,6 +183,8 @@ def login():
 
         # sending GET request and saving the response as response object 
         r_user_info = requests.get('https://api.twitch.tv/kraken/user',headers = headers) 
+        print(json.loads(r_user_info.text))
+        sys.stdout.flush()
         #assert r_user_info.json() == None
         #assert json.loads(r_user_info.text)== {"display_name":"chinagirl123","_id":"543992639","name":"chinagirl123","type":"user","bio":null,"created_at":"2020-06-15T04:34:42.653308Z","updated_at":"2020-06-26T19:21:20.331875Z","logo":"https://static-cdn.jtvnw.net/user-default-pictures-uv/dbdc9198-def8-11e9-8681-784f43822e80-profile_image-300x300.png","email":"j8rocks@gmail.com","email_verified":true,"partnered":false,"twitter_connected":false,"notifications":{"push":true,"email":true}}
         return_data = json.loads(r_user_info.text)
