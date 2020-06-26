@@ -170,7 +170,7 @@ def login():
             loggedin = session['loggedin']
         )
     if flask.request.method == 'POST':
-        session['token'] = request.args.get("access_token", default="",type=str)
+        session['token'] = flask.request.args.get("access_token", default="",type=str)
         #session['token'] = '9dc9rumb7sf6fx32quyyh2tiuz62xw'
         session['loggedin'] = True
         
