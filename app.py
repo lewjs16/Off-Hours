@@ -170,7 +170,6 @@ def login():
             loggedin = session['loggedin']
         )
     if flask.request.method == 'POST':
-        sample = open('message.txt', 'w') 
         session['token'] = request.args.get("token", default="",type=str)
         session['loggedin'] = True
         
@@ -179,15 +178,12 @@ def login():
         data = {
             "Accept" : "https://off-hours-backend.heroku.com",
             "Client-ID" : client_id,
-            "Authorization" : "OAuth "+ flask.session['token']
+            "Authorization" : "OAuth "+ session['token']
         } 
 
         # sending GET request and saving the response as response object 
         r_user_info = requests.get(url = "https://api.twitch.tv/kraken/user", data=data) 
         return_data = json.loads(r_user_info.text)
-        print('Test', file = sample)
-        print(r_user_info.text, file = sample) 
-        sample.close() 
         username = return_data['display_name']
         name = return_data['name']
         #username = "test"
