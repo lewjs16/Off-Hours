@@ -176,9 +176,9 @@ def login():
         # defining a params dict for the parameters to be sent to the API 
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         data = {
-            "Accept" : "application/vnd.twitchtv.v5+json",
-            "Client-ID" : client_id,
-            "Authorization" : "OAuth "+ session['token']
+            "client_id" : client_id,
+            "authorization" : "OAuth "+ session['token'],
+            "scope": "user_read"
         } 
 
         # sending GET request and saving the response as response object 
