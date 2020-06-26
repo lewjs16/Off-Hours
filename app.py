@@ -21,9 +21,9 @@ from flask_sqlalchemy_session import flask_scoped_session
 
 # initializes app
 app = Flask(__name__)
-engine = create_engine("sqlite://")
-session_factory = sessionmaker(bind=engine)
-session = flask_scoped_session(session_factory, app)
+#engine = create_engine("sqlite://")
+#session_factory = sessionmaker(bind=engine)
+#session = flask_scoped_session(session_factory, app)
 app.config.update(SECRET_KEY =  os.urandom(24))
 app.config.from_object(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
