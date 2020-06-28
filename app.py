@@ -78,10 +78,10 @@ class Users(db.Model):
     live = db.Column(db.Boolean, nullable=False)
 
 
-    def __init__(self,username, name,live):
-        self.username = username
-        self.name = name
-        self.live = live
+    #def __init__(self,username, name,live):
+    #    self.username = username
+    #    self.name = name
+    #    self.live = live
 
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
