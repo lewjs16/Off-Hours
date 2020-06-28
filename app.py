@@ -30,17 +30,19 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
 #cors = CORS(app, resources={r"/login": {"origins": "*"}})
 CORS(app)
-#basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 #For login 
 LOGIN = Flask(__name__)
 
 # initializes database
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'db.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init db
 db = SQLAlchemy(app)
+db.init_app(app)
 
 # Init ma
 ma = Marshmallow(app)
