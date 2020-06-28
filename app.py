@@ -24,7 +24,7 @@ app = Flask(__name__)
 #engine = create_engine("sqlite://")
 #session_factory = sessionmaker(bind=engine)
 #session = flask_scoped_session(session_factory, app)
-app.config.update(SECRET_KEY =  os.urandom(24))
+app.config.update(SECRET_KEY = b'b\xbe\x11\xbe\xf1\xc5\xedU\xf8\xec\xe7\xc8\x82\x05\xff@')
 app.config.from_object(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
