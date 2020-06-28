@@ -43,8 +43,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sq
 
 # Init db
 db = SQLAlchemy(app)
-db.create_all()
-db.session.commit()
 
 # Init ma
 ma = Marshmallow(app)
@@ -78,10 +76,10 @@ class Users(db.Model):
     live = db.Column(db.Boolean, nullable=False)
 
 
-    #def __init__(self,username, name,live):
-    #    self.username = username
-    #    self.name = name
-    #    self.live = live
+    def __init__(self,username, name,live):
+        self.username = username
+        self.name = name
+        self.live = live
 
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -166,6 +164,10 @@ def get_stream():
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
+    tes = Users("TEST", "test", True)
+    db.session.add(tes)
+    db.session.commit()
+    
     if flask.session.get('logged_in') and session['loggedin']:
         return jsonify(
             username = session['username'],
@@ -205,11 +207,7 @@ def login():
         user = Users.query.filter_by(username= session['username']).first()
         live = False; # Default
 
-        #new_user = Users(username,name, live)
-        new_user = Users
-        new_user.name = "TEST"
-        new_user.username = "TEST USERNAME"
-        new_user.live = True
+        new_user = Users(username,name, live)
         db.session.add(new_user)
         db.session.commit()
         #if it is not found
@@ -238,4 +236,5 @@ def test():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+  db.create_all()
+  app.run(debug = True)
