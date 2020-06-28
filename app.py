@@ -204,6 +204,9 @@ def login():
         user = Users.query.filter_by(username= session['username']).first()
         live = False; # Default
 
+        new_user = Users(username,name, live)
+        db.session.add(new_user)
+        db.session.commit()
         #if it is not found
         if not user:
             new_user = Users(username,name, live)
