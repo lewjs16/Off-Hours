@@ -36,15 +36,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 LOGIN = Flask(__name__)
 
 # initializes database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'db.sqlite')
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init db
 db = SQLAlchemy(app)
-db.init_app(app)
-db.create_all()
 # Init ma
 ma = Marshmallow(app)
 
