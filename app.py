@@ -203,7 +203,7 @@ def login():
         live = False; # Default
 
         #if it is not found
-        if user is None:
+        if not user:
             new_user = Users(username,name, live)
             db.session.add(new_user)
             db.session.commit()
