@@ -23,9 +23,9 @@ app = Flask(__name__)
 #engine = create_engine("sqlite://")
 #session_factory = sessionmaker(bind=engine)
 #session = flask_scoped_session(session_factory, app)
-app.secret_key = "hello"
 app.config.from_object(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.secret_key = "hello"
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
 #cors = CORS(app, resources={r"/login": {"origins": "*"}})
