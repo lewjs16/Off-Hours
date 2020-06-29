@@ -171,7 +171,8 @@ def login():
     if 'loggedin' in session and session['loggedin']:
         return jsonify(
             username = session['username'],
-            name = session['name'],
+            #name = session['name'],
+            name = "here two",
             loggedin = session['loggedin']
         )
     if flask.request.method == 'POST':
@@ -221,6 +222,8 @@ def login():
             loggedin = session['loggedin']
         )
     return jsonify(
+        username = session['username'],
+        name = "here1",
         loggedin = False
     )
 
