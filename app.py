@@ -31,7 +31,7 @@ app = Flask(__name__)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 SESSION_TYPE = 'filesystem'
-SECRET_KEY =  = "hello"
+SECRET_KEY = "hello"
 app.config.from_object(__name__)
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
@@ -256,9 +256,19 @@ def login():
 def test():
     return jsonify({"test": "working"})
 
+@app.route('/test_session')
+def test_session():
+    session['name'] = "test session"
+    return 'Hello was saved into session[this_one].'
+
+@app.route('/check_session')
+def check_session():
+    return jsonify({"check session" : session['name']})
+
+
 #END TEST FUNCTIONS---------------------------------------------------------------------
 
 
 if __name__ == '__main__':
-  db.create_all()
+  #db.create_all()
   app.run(debug = True)
