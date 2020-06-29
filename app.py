@@ -28,12 +28,15 @@ app = Flask(__name__)
 #engine = create_engine("sqlite://")
 #session_factory = sessionmaker(bind=engine)
 #session = flask_scoped_session(session_factory, app)
-app.config.from_object(__name__)
+
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.secret_key = "hello"
+SESSION_TYPE = 'filesystem'
+SECRET_KEY =  = "hello"
+app.config.from_object(__name__)
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
 #cors = CORS(app, resources={r"/login": {"origins": "*"}})
+Session(app)
 CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -241,6 +244,7 @@ def login():
     if 'username' not in session:
         session['username'] = "not working"
     return jsonify(
+        test = session['username'],
         loggedin = False
     )
 
