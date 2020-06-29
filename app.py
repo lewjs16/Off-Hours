@@ -159,7 +159,7 @@ def index():
 #START STREAM FUNCTIONS---------------------------------------------------------------------
 @app.route('/stream', methods = ['GET','POST'])
 def get_stream():
-    username = request.args.get("username", default=flask.session["username"],type=str)
+    username = flask.request.args['username']
     user = Users.query.filter_by(username=username).first()
     live = user.live
     
