@@ -167,11 +167,10 @@ def login():
     
     if 'loggedin' in session and session['loggedin']:
         return jsonify(
-            #username = session['username'],
-            #name = session['name'],
-            username = "username two",
-            name = "here two",
-            loggedin = session['loggedin']
+            username = session['username'],
+            name = session['name'],
+            loggedin = session['loggedin'],
+            test = "got here"
         )
     if flask.request.method == 'POST':
         session['token'] = flask.request.args['token']
@@ -220,8 +219,8 @@ def login():
             loggedin = session['loggedin']
         )
     return jsonify(
-        username = "test",
-        name = "here1",
+        test = "hehere",
+        
         loggedin = False
     )
 
