@@ -168,7 +168,7 @@ def login():
     db.session.add(tes)
     db.session.commit()
     
-    if flask.session.get('logged_in') and session['loggedin']:
+    if flask.session.get('loggedin') and session['loggedin']:
         return jsonify(
             username = session['username'],
             name = session['name'],
