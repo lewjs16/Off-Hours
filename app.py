@@ -189,14 +189,28 @@ def get_stream():
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-    
-    if 'loggedin' in session and session['loggedin']:
-        return jsonify(
+
+    if flask.request.method == 'GET':
+        if session.get('username'):
+            return jsonify(
             username = session['username'],
             name = session['name'],
             loggedin = session['loggedin'],
             test = "got here"
-        )
+        ) 
+        else:
+            return jsonify(
+            test = "Not logged in",
+            loggedin = False
+            )
+    
+    # if 'loggedin' in session and session['loggedin']:
+    #     return jsonify(
+    #         username = session['username'],
+    #         name = session['name'],
+    #         loggedin = session['loggedin'],
+    #         test = "got here"
+    #     )
     if flask.request.method == 'POST':
         session['token'] = flask.request.args['token']
         
@@ -241,12 +255,12 @@ def login():
             name = session['name'],
             loggedin = session['loggedin']
         )
-    if 'username' not in session:
-        session['username'] = "not working"
-    return jsonify(
-        test = session['username'],
-        loggedin = False
-    )
+    # if 'username' not in session:
+    #     session['username'] = "not working"
+    # return jsonify(
+    #     test = session['username'],
+    #     loggedin = False
+    # )
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
