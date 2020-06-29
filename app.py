@@ -21,10 +21,8 @@ from flask_sqlalchemy_session import flask_scoped_session
 # initializes app
 app = Flask(__name__)
 #engine = create_engine("sqlite://")
-#session_factory = sessionmaker(bind=engine)
-#session = flask_scoped_session(session_factory, app)
-app.config.update(SECRET_KEY = b'b\xbe\x11\xbe\xf1\xc5\xedU\xf8\xec\xe7\xc8\x82\x05\xff@')
 app.config.from_object(__name__)
+app.secret_key = "alfdskj"
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
@@ -36,13 +34,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 LOGIN = Flask(__name__)
 
 # initializes database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'db.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init db
 db = SQLAlchemy(app)
+db.init_app(app)
 
 # Init ma
 ma = Marshmallow(app)
@@ -133,6 +131,7 @@ questions_schema_single = Questions_Schema(many=False)
 
 #START STREAM FUNCTIONS---------------------------------------------------------------------
 @app.route('/stream', methods = ['GET','POST'])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def get_stream():
     username = request.args.get("username", default=flask.session["username"],type=str)
     user = Users.query.filter_by(username=username).first()
@@ -164,11 +163,7 @@ def get_stream():
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-    tes = Users("TEST", "test", True)
-    db.session.add(tes)
-    db.session.commit()
-    
-    if flask.session.get('logged_in') and session['loggedin']:
+    if ("loggedin" in session) and session['loggedin']:
         return jsonify(
             username = session['username'],
             name = session['name'],
@@ -207,9 +202,6 @@ def login():
         user = Users.query.filter_by(username= session['username']).first()
         live = False; # Default
 
-        new_user = Users(username,name, live)
-        db.session.add(new_user)
-        db.session.commit()
         #if it is not found
         if not user:
             new_user = Users(username,name, live)
@@ -236,5 +228,4 @@ def test():
 
 
 if __name__ == '__main__':
-  db.create_all()
-  app.run(debug = True)
+    app.run(debug=True)
