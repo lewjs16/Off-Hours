@@ -16,6 +16,8 @@ redis = "*"
 marshmallow-sqlalchemy = "*"
 gunicorn = "*"
 requests = "*"
+pusher = "*"
+simplejson = "*"
 
 [requires]
 python_version = "3.6"

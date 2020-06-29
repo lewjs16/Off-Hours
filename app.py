@@ -8,6 +8,8 @@ import flask_marshmallow
 import flask_session
 import datetime
 import redis
+import simplejson
+import pusher
 from flask_session import Session
 from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
@@ -18,6 +20,9 @@ from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from flask_sqlalchemy_session import flask_scoped_session
+from flask import render_template, json
+from pusher import pusher
+    
 # initializes app
 app = Flask(__name__)
 #engine = create_engine("sqlite://")
@@ -40,6 +45,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sq
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+ # configure pusher object
+pusher = pusher.Pusher(
+app_id="1027801",
+key="3aceae7853d07b617f87",
+secret="d5c458d63bcf29605608",
+cluster="us2",
+ssl=True)
 
 # Init db
 db = SQLAlchemy(app)
@@ -73,13 +86,15 @@ class Users(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(80),nullable=False)
     name = db.Column(db.String(80),nullable=False)
+    email = db.Column(db.String(80), nullable = False)
     live = db.Column(db.Boolean, nullable=False)
 
 
-    def __init__(self,username, name,live):
+    def __init__(self,username, name,live, email):
         self.username = username
         self.name = name
         self.live = live
+        self.email = email
 
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -108,7 +123,7 @@ class Questions(db.Model):
 
 class User_Schema(ma.Schema):
     class Meta: 
-        fields = ('id','username', 'name','live')
+        fields = ('id','username', 'name','live', 'email')
 
 class Questions_Schema(ma.Schema):
     class Meta: 
@@ -130,6 +145,13 @@ questions_schema_multi = Questions_Schema(many=True)
 user_schema_single = User_Schema(many=False)
 questions_schema_single = Questions_Schema(many=False)
 # subjects_schema_single = Subjects_Schema(many = False)
+
+#START CHAT FUNCTIONS-----------------------------------------------------------------------
+@app.route('/')
+def index():
+    return render_template('index.html')
+#END CHAT FUNCTIONS-------------------------------------------------------------------------
+
 
 #START STREAM FUNCTIONS---------------------------------------------------------------------
 @app.route('/stream', methods = ['GET','POST'])
@@ -164,9 +186,9 @@ def get_stream():
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-    tes = Users("TEST", "test", True)
-    db.session.add(tes)
-    db.session.commit()
+    #tes = Users("TEST", "test", True)
+    #db.session.add(tes)
+    #db.session.commit()
     
     if flask.session.get('logged_in') and session['loggedin']:
         return jsonify(
@@ -196,6 +218,7 @@ def login():
         return_data = json.loads(r_user_info.text)
         username = return_data['display_name']
         name = return_data['name']
+        email = return_data['email']
         #username = "test"
         #name = "again"
 
@@ -207,12 +230,9 @@ def login():
         user = Users.query.filter_by(username= session['username']).first()
         live = False; # Default
 
-        new_user = Users(username,name, live)
-        db.session.add(new_user)
-        db.session.commit()
         #if it is not found
         if not user:
-            new_user = Users(username,name, live)
+            new_user = Users(username,name, live, email)
             db.session.add(new_user)
             db.session.commit()
         return jsonify(
