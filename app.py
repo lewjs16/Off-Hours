@@ -164,14 +164,12 @@ def get_stream():
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-    tes = Users("TEST", "test", True)
-    db.session.add(tes)
-    db.session.commit()
     
     if 'loggedin' in session and session['loggedin']:
         return jsonify(
-            username = session['username'],
+            #username = session['username'],
             #name = session['name'],
+            username = "username two",
             name = "here two",
             loggedin = session['loggedin']
         )
@@ -222,7 +220,7 @@ def login():
             loggedin = session['loggedin']
         )
     return jsonify(
-        username = session['username'],
+        username = "test",
         name = "here1",
         loggedin = False
     )
