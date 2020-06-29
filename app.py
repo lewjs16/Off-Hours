@@ -26,9 +26,12 @@ from pusher import pusher
 # initializes app
 app = Flask(__name__)
 #engine = create_engine("sqlite://")
+#session_factory = sessionmaker(bind=engine)
+#session = flask_scoped_session(session_factory, app)
 app.config.from_object(__name__)
 app.secret_key = "alfdskj"
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.secret_key = "hello"
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
 #cors = CORS(app, resources={r"/login": {"origins": "*"}})
@@ -184,15 +187,13 @@ def get_stream():
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-    #tes = Users("TEST", "test", True)
-    #db.session.add(tes)
-    #db.session.commit()
     
-    if flask.session.get('logged_in') and session['loggedin']:
+    if 'loggedin' in session and session['loggedin']:
         return jsonify(
             username = session['username'],
             name = session['name'],
-            loggedin = session['loggedin']
+            loggedin = session['loggedin'],
+            test = "got here"
         )
     if flask.request.method == 'POST':
         session['token'] = flask.request.args['token']
@@ -238,7 +239,10 @@ def login():
             name = session['name'],
             loggedin = session['loggedin']
         )
+    if 'username' not in session:
+        session['username'] = "not working"
     return jsonify(
+        test = session['username'],
         loggedin = False
     )
 
