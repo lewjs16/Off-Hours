@@ -219,8 +219,7 @@ def login():
             loggedin = session['loggedin']
         )
     return jsonify(
-        test = "hehere",
-        
+        test = session['username'],
         loggedin = False
     )
 
