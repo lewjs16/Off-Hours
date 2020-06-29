@@ -191,11 +191,11 @@ def login():
     # only when we log in (POST) AND when the user is not already in our database
 
     if flask.request.method == 'GET':
-        if session.get('username'):
+        if flask.session.get('username'):
             return jsonify(
-            username = session['username'],
-            name = session['name'],
-            loggedin = session['loggedin'],
+            username = flask.session['username'],
+            name = flask.session['name'],
+            loggedin = flask.session['loggedin'],
             test = "got here"
         ) 
         else:
@@ -212,17 +212,17 @@ def login():
     #         test = "got here"
     #     )
     if flask.request.method == 'POST':
-        session['token'] = flask.request.args['token']
+        flask.session['token'] = flask.request.args['token']
         
         #session['token'] = '9dc9rumb7sf6fx32quyyh2tiuz62xw'
-        session['loggedin'] = True
+        flask.session['loggedin'] = True
         
         # defining a params dict for the parameters to be sent to the API 
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         headers = {
             'Accept' : 'application/vnd.twitchtv.v5+json',
             'Client-ID' : client_id,
-            'Authorization' : 'OAuth '+ session['token'],
+            'Authorization' : 'OAuth '+ flask.session['token'],
         }
 
         # sending GET request and saving the response as response object 
@@ -238,11 +238,11 @@ def login():
         #name = "again"
 
         # get username
-        session['username'] = username
-        session['name'] = name
+        flask.session['username'] = username
+        flask.session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username= session['username']).first()
+        user = Users.query.filter_by(username= flask.session['username']).first()
         live = False; # Default
 
         #if it is not found
@@ -251,9 +251,9 @@ def login():
             db.session.add(new_user)
             db.session.commit()
         return jsonify(
-            username = session['username'],
-            name = session['name'],
-            loggedin = session['loggedin']
+            username = flask.session['username'],
+            name = flask.session['name'],
+            loggedin = flask.session['loggedin']
         )
     # if 'username' not in session:
     #     session['username'] = "not working"
