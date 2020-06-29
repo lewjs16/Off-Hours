@@ -218,6 +218,8 @@ def login():
             name = session['name'],
             loggedin = session['loggedin']
         )
+    if 'username' not in session:
+        session['username'] = "not working"
     return jsonify(
         test = session['username'],
         loggedin = False
