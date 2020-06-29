@@ -146,30 +146,31 @@ user_schema_single = User_Schema(many=False)
 questions_schema_single = Questions_Schema(many=False)
 # subjects_schema_single = Subjects_Schema(many = False)
 
-#START CHAT FUNCTIONS-----------------------------------------------------------------------
-@app.route('/')
-def index():
-    return render_template('chat.html')
 
-@app.route('/admin')
-def admin():
-    return render_template('chat_admin.html')
+# #START CHAT FUNCTIONS-----------------------------------------------------------------------
+# @app.route('/')
+# def index():
+#     return render_template('chat.html')
 
-@app.route('/new/guest', methods=['POST'])
-def guestUser():
-    data = request.json
-    pusher.trigger(u'general-channel', u'new-guest-details', { 
-        'name' : session['name'], 
-        'email' : session['email']
-        })
-    return json.dumps(data)
+# @app.route('/admin')
+# def admin():
+#     return render_template('chat_admin.html')
 
-@app.route("/pusher/auth", methods=['POST'])
-def pusher_authentication():
-    auth = pusher.authenticate(channel=request.form['channel_name'],socket_id=request.form['socket_id'])
-    return json.dumps(auth)
+# @app.route('/new/guest', methods=['POST'])
+# def guestUser():
+#     data = request.json
+#     pusher.trigger(u'general-channel', u'new-guest-details', { 
+#         'name' : session['name'], 
+#         'email' : session['email']
+#         })
+#     return json.dumps(data)
 
-#END CHAT FUNCTIONS-------------------------------------------------------------------------
+# @app.route("/pusher/auth", methods=['POST'])
+# def pusher_authentication():
+#     auth = pusher.authenticate(channel=request.form['channel_name'],socket_id=request.form['socket_id'])
+#     return json.dumps(auth)
+
+# #END CHAT FUNCTIONS-------------------------------------------------------------------------
 
 
 #START STREAM FUNCTIONS---------------------------------------------------------------------
