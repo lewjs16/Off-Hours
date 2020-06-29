@@ -29,7 +29,6 @@ app = Flask(__name__)
 #session_factory = sessionmaker(bind=engine)
 #session = flask_scoped_session(session_factory, app)
 app.config.from_object(__name__)
-app.secret_key = "alfdskj"
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = "hello"
 
