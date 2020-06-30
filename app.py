@@ -34,11 +34,11 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # initializes database
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
-#app.config['SECRET_KEY'] = b'6hc/_gsh,./;2ZZx3c6_s,1//'
+app.config['SECRET_KEY'] = b'6hc/_gsh,./;2ZZx3c6_s,1//'
 
 #SESSION_TYPE = 'filesystem'
 #SECRET_KEY = b'hello'
-#app.config.from_object(__name__)
+app.config.from_object(__name__)
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
 #cors = CORS(app, resources={r"/login": {"origins": "*"}})
@@ -193,10 +193,10 @@ def login():
         #     loggedin = flask.session['loggedin'],
         #     test = "got here"
         # )
-        return jsonify(username = flask.session['username'])
-        if flask.session.get('username'):
+        #return jsonify(username = flask.session['username'])
+        if 'loggedin' in session and session['loggedin']:
             return jsonify(
-            username = flask.session['username']
+            username = session['username']
             ) 
         else:
             return jsonify(
@@ -237,12 +237,12 @@ def login():
         #name = "again"
 
         # get username
-        flask.session['username'] = username
-        flask.session.modified = True
+        session['username'] = username
+        session.modified = True
         #flask.session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username= flask.session['username']).first()
+        user = Users.query.filter_by(username= session['username']).first()
         live = False; # Default
 
         #if it is not found
@@ -252,7 +252,7 @@ def login():
             db.session.commit()
         
         return jsonify(
-            username = flask.session['username']
+            username = session['username']
         )
         # return jsonify(
         #     username = flask.session['username'],
