@@ -36,9 +36,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
 #app.config['SECRET_KEY'] = b'6hc/_gsh,./;2ZZx3c6_s,1//'
 
-SESSION_TYPE = 'filesystem'
+#SESSION_TYPE = 'filesystem'
 #SECRET_KEY = b'hello'
-app.config.from_object(__name__)
+#app.config.from_object(__name__)
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
 #cors = CORS(app, resources={r"/login": {"origins": "*"}})
@@ -289,5 +289,5 @@ def check_session():
 
 if __name__ == '__main__':
   #db.create_all()
-  app.secret_key = b'123'
-  app.run(debug = True)
+  app.secret_key = "123"
+  app.run()
