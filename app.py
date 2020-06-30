@@ -30,6 +30,10 @@ app = Flask(__name__)
 #session = flask_scoped_session(session_factory, app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+# initializes database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
+
 SESSION_TYPE = 'filesystem'
 SECRET_KEY = "hello"
 app.config.from_object(__name__)
@@ -40,14 +44,6 @@ Session(app)
 CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-#For login 
-LOGIN = Flask(__name__)
-
-# initializes database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
  # configure pusher object
 pusher = pusher.Pusher(
@@ -191,18 +187,24 @@ def login():
     # only when we log in (POST) AND when the user is not already in our database
 
     if flask.request.method == 'GET':
-        if flask.session.get('username'):
-            return jsonify(
+        return jsonify(
             username = flask.session['username'],
             name = flask.session['name'],
             loggedin = flask.session['loggedin'],
             test = "got here"
-        ) 
-        else:
-            return jsonify(
-            test = "Not logged in",
-            loggedin = False
-            )
+        )
+        # if flask.session.get('username'):
+        #     return jsonify(
+        #     username = flask.session['username'],
+        #     name = flask.session['name'],
+        #     loggedin = flask.session['loggedin'],
+        #     test = "got here"
+        # ) 
+        # else:
+        #     return jsonify(
+        #     test = "Not logged in",
+        #     loggedin = False
+        #     )
     
     # if 'loggedin' in session and session['loggedin']:
     #     return jsonify(
