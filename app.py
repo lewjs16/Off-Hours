@@ -209,17 +209,17 @@ def login():
     #         test = "got here"
     #     )
     if flask.request.method == 'POST':
-        flask.session['token'] = flask.request.args['token']
-        
+        #flask.session['token'] = flask.request.args['token']
+        token = flask.request.args['token']
         #session['token'] = '9dc9rumb7sf6fx32quyyh2tiuz62xw'
-        flask.session['loggedin'] = True
+        #flask.session['loggedin'] = True
         
         # defining a params dict for the parameters to be sent to the API 
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         headers = {
             'Accept' : 'application/vnd.twitchtv.v5+json',
             'Client-ID' : client_id,
-            'Authorization' : 'OAuth '+ flask.session['token'],
+            'Authorization' : 'OAuth '+ token,
         }
 
         # sending GET request and saving the response as response object 
@@ -236,7 +236,7 @@ def login():
 
         # get username
         flask.session['username'] = username
-        flask.session['name'] = name
+        #flask.session['name'] = name
         
         # check if user is in database
         user = Users.query.filter_by(username= flask.session['username']).first()
