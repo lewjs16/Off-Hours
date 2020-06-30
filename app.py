@@ -187,34 +187,12 @@ def login():
     # only when we log in (POST) AND when the user is not already in our database
 
     if flask.request.method == 'GET':
-        # return jsonify(
-        #     username = flask.session['username'],
-        #     name = flask.session['name'],
-        #     loggedin = flask.session['loggedin'],
-        #     test = "got here"
-        # )
-        return jsonify(username = session.get('username'))
-        
-        if 'loggedin' in session and session['loggedin']:
-            return jsonify(
-            username = session['username']
-            ) 
-        else:
-            return jsonify(
-            username = "Not logged in"
-            )
-    
-    # if 'loggedin' in session and session['loggedin']:
-    #     return jsonify(
-    #         username = session['username'],
-    #         name = session['name'],
-    #         loggedin = session['loggedin'],
-    #         test = "got here"
-    #     )
+        return jsonify(username = request.cookies.get('foo'))
+ 
+
     if flask.request.method == 'POST':
         #flask.session['token'] = flask.request.args['token']
         token = flask.request.args['token']
-        #session['token'] = '9dc9rumb7sf6fx32quyyh2tiuz62xw'
         #flask.session['loggedin'] = True
         
         # defining a params dict for the parameters to be sent to the API 
@@ -228,22 +206,20 @@ def login():
         # sending GET request and saving the response as response object 
         r_user_info = requests.get('https://api.twitch.tv/kraken/user',headers = headers) 
 
-        #assert r_user_info.json() == None
-        #assert json.loads(r_user_info.text)== {"display_name":"chinagirl123","_id":"543992639","name":"chinagirl123","type":"user","bio":null,"created_at":"2020-06-15T04:34:42.653308Z","updated_at":"2020-06-26T19:21:20.331875Z","logo":"https://static-cdn.jtvnw.net/user-default-pictures-uv/dbdc9198-def8-11e9-8681-784f43822e80-profile_image-300x300.png","email":"j8rocks@gmail.com","email_verified":true,"partnered":false,"twitter_connected":false,"notifications":{"push":true,"email":true}}
         return_data = json.loads(r_user_info.text)
         username = return_data['display_name']
         name = return_data['name']
         email = return_data['email']
-        #username = "test"
-        #name = "again"
 
         # get username
-        session['username'] = username
-        session.modified = True
+        res = make_response("Setting a cookie")
+        res.set_cookie('username', username, max = 60*60*24)
+        #session['username'] = username
+        #session.modified = True
         #flask.session['name'] = name
         
         # check if user is in database
-        user = Users.query.filter_by(username= session['username']).first()
+        user = Users.query.filter_by(username= username).first()
         live = False; # Default
 
         #if it is not found
@@ -253,19 +229,8 @@ def login():
             db.session.commit()
         
         return jsonify(
-            username = session.get('username')
+            username = username
         )
-        # return jsonify(
-        #     username = flask.session['username'],
-        #     name = flask.session['name'],
-        #     loggedin = flask.session['loggedin']
-        # )
-    # if 'username' not in session:
-    #     session['username'] = "not working"
-    # return jsonify(
-    #     test = session['username'],
-    #     loggedin = False
-    # )
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
@@ -277,12 +242,14 @@ def test():
 
 @app.route('/test_session')
 def test_session():
-    session['name'] = "test session"
-    return 'Hello was saved into session[this_one].'
+    res = make_response("Setting a cookie")
+    res.set_cookie('foo', 'bar', max_age=60*60*24*365*2)
+    return jsonify({"test": "here"})
 
 @app.route('/check_session')
 def check_session():
-    return jsonify({"check session" : session['name']})
+    return jsonify({"username":request.cookies.get('foo') })
+    
 
 
 #END TEST FUNCTIONS---------------------------------------------------------------------
