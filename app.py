@@ -187,7 +187,7 @@ def login():
     # only when we log in (POST) AND when the user is not already in our database
 
     if flask.request.method == 'GET':
-        return jsonify(username = request.cookies.get('username'))
+        return jsonify(username = session.get('username'))
  
 
     if flask.request.method == 'POST':
@@ -212,10 +212,8 @@ def login():
         email = return_data['email']
 
         # get username
-        res = make_response("Setting a cookie")
-        res.set_cookie('username', username)
-        #session['username'] = username
-        #session.modified = True
+        session['username'] = username
+        session.modified = True
         #flask.session['name'] = name
         
         # check if user is in database
@@ -228,7 +226,9 @@ def login():
             db.session.add(new_user)
             db.session.commit()
         
-        return res
+        return jsonify(
+            username = session.get([username])
+        )
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
