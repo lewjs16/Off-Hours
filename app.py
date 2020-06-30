@@ -213,7 +213,7 @@ def login():
 
         # get username
         res = make_response("Setting a cookie")
-        res.set_cookie('username', username, max = 60*60*24)
+        res.set_cookie('username', username)
         #session['username'] = username
         #session.modified = True
         #flask.session['name'] = name
@@ -228,9 +228,7 @@ def login():
             db.session.add(new_user)
             db.session.commit()
         
-        return jsonify(
-            username = username
-        )
+        return res
 
 
 #END USER FUNCTIONS---------------------------------------------------------------------
