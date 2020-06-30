@@ -10,7 +10,7 @@ import datetime
 import redis
 import simplejson
 import pusher
-from flask_session import Session
+#from flask_session import Session
 from flask import Flask, request, jsonify, session
 from flask import make_response, current_app
 from flask_cors import CORS, cross_origin
@@ -42,7 +42,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sq
 
 #cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
 #cors = CORS(app, resources={r"/login": {"origins": "*"}})
-Session(app)
+#Session(app)
 CORS(app)
 
  # configure pusher object
