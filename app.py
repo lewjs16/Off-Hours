@@ -237,6 +237,7 @@ def login():
 
         # get username
         flask.session['username'] = username
+        flask.session.modified = True
         #flask.session['name'] = name
         
         # check if user is in database
