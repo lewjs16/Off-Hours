@@ -192,6 +192,7 @@ def login():
         #     loggedin = flask.session['loggedin'],
         #     test = "got here"
         # )
+        return jsonify(session['username'])
         if flask.session.get('username'):
             return jsonify(
             username = flask.session['username']
