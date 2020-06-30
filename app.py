@@ -187,7 +187,7 @@ def login():
     # only when we log in (POST) AND when the user is not already in our database
 
     if flask.request.method == 'GET':
-        return jsonify(username = request.cookies.get('foo'))
+        return jsonify(username = request.cookies.get('username'))
  
 
     if flask.request.method == 'POST':
