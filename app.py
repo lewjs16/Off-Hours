@@ -227,7 +227,7 @@ def login():
             db.session.commit()
         
         return jsonify(
-            username = session.get([username])
+            username = session.get('username')
         )
 
 
