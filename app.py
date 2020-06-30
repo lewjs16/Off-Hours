@@ -10,24 +10,16 @@ import datetime
 import redis
 import simplejson
 import pusher
-#from flask_session import Session
-from flask import Flask, request, jsonify, session
-from flask import make_response, current_app
+
+from flask import Flask, request, jsonify, session,make_response, current_app, render_template, json
 from flask_cors import CORS, cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from datetime import datetime
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from flask_sqlalchemy_session import flask_scoped_session
-from flask import render_template, json
 from pusher import pusher
     
 # initializes app
 app = Flask(__name__)
-#engine = create_engine("sqlite://")
-#session_factory = sessionmaker(bind=engine)
-#session = flask_scoped_session(session_factory, app)
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -36,13 +28,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(basedir,'db.sqlite')
 app.config['SECRET_KEY'] = b'6hc/_gsh,./;2ZZx3c6_s,1//'
 
-#SESSION_TYPE = 'filesystem'
-#SECRET_KEY = b'hello'
 app.config.from_object(__name__)
 
-#cors = CORS(app, resources={r"/login/.*": {"origins": "*"}})
-#cors = CORS(app, resources={r"/login": {"origins": "*"}})
-#Session(app)
 CORS(app)
 
  # configure pusher object
@@ -61,26 +48,6 @@ ma = Marshmallow(app)
 
 
 #Classes 
-# class Subjects(db.Model):
-#     id = db.Column(db.Integer,primary_key=True)
-#     subject = db.Column(db.String(80),nullable=False)
-
-#     def __init__(self,id,subject):
-#         self.id = id
-#         self.subject = subject
-
-# class Streams(db.Model):
-#     id = db.Column(db.Integer,primary_key=True)
-#     title = db.Column(db.String(80),nullable=False)
-#     subject = db.Column(db.String(80),db.ForeignKey('subjects.id'),nullable=False)
-#     ownerid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
-#     vidnum = db.Column(db.Integer,nullable=True)
-
-#     def __init__(self,title,subject,ownerid):
-#         self.title=title
-#         self.subject=subject
-#         self.ownerid=ownerid
-
 class Users(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(80),nullable=False)
@@ -97,12 +64,8 @@ class Users(db.Model):
 
 class Questions(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    # streamid = db.Column(db.Integer,db.ForeignKey('streams.id'),nullable=False)
     userid = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
-    # offervalue = db.Column(db.Integer,nullable=False)
     message = db.Column(db.Text,nullable=True)
-    # image = db.Column(db.String(80),nullable=True)
-    # accepted = db.Column(db.Boolean,default=False,nullable=False)
     completed = db.Column(db.Boolean,default=False,nullable=False)
     time = db.Column(db.DateTime, nullable=False,default=datetime.utcnow)
 
@@ -112,14 +75,6 @@ class Questions(db.Model):
         self.completed = False
 
 #Schema 
-# class Subjects_Schema(ma.Schema):
-#     class Meta:
-#         fields = ('id','subject')
-
-# class Streams_Schema(ma.Schema):
-#     class Meta:
-#         fields = ('id','title', 'subject', 'ownerid')
-
 class User_Schema(ma.Schema):
     class Meta: 
         fields = ('id','username', 'name','live', 'email')
@@ -130,20 +85,14 @@ class Questions_Schema(ma.Schema):
 
 
 # Init Schema
-# streams_schema_reg = Streams_Schema()
 user_schema_reg = User_Schema()
 questions_schema_reg = Questions_Schema()
-# subjects_schema_reg = Subjects_Schema()
 
-# streams_schema_multi = Streams_Schema(many=True)
 user_schema_multi = User_Schema(many=True)
 questions_schema_multi = Questions_Schema(many=True)
-# subjects_schema_multi = Subjects_Schema(many = True)
 
-# streams_schema_single = Streams_Schema(many = False)
 user_schema_single = User_Schema(many=False)
 questions_schema_single = Questions_Schema(many=False)
-# subjects_schema_single = Subjects_Schema(many = False)
 
 #START CHAT FUNCTIONS-----------------------------------------------------------------------
 @app.route('/')
@@ -185,16 +134,13 @@ def get_stream():
 def login():
     # dont want to make a new user each time front end checks if we are logged in
     # only when we log in (POST) AND when the user is not already in our database
-
     if flask.request.method == 'GET':
         return jsonify(username = session.get('username'))
  
 
     if flask.request.method == 'POST':
-        #flask.session['token'] = flask.request.args['token']
         token = flask.request.args['token']
-        #flask.session['loggedin'] = True
-        
+
         # defining a params dict for the parameters to be sent to the API 
         client_id = "hgzp49atoti7g7fzd9v4pkego3i7ae"
         headers = {
@@ -214,7 +160,6 @@ def login():
         # get username
         session['username'] = username
         session.modified = True
-        #flask.session['name'] = name
         
         # check if user is in database
         user = Users.query.filter_by(username= username).first()
@@ -248,8 +193,6 @@ def test_session():
 def check_session():
     return jsonify({"username":request.cookies.get('foo') })
     
-
-
 #END TEST FUNCTIONS---------------------------------------------------------------------
 
 
