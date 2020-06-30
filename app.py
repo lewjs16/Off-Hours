@@ -193,7 +193,8 @@ def login():
         #     loggedin = flask.session['loggedin'],
         #     test = "got here"
         # )
-        #return jsonify(username = flask.session['username'])
+        return jsonify(username = session.get('username'))
+        
         if 'loggedin' in session and session['loggedin']:
             return jsonify(
             username = session['username']
@@ -252,7 +253,7 @@ def login():
             db.session.commit()
         
         return jsonify(
-            username = session['username']
+            username = session.get('username')
         )
         # return jsonify(
         #     username = flask.session['username'],
